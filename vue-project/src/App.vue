@@ -1,8 +1,9 @@
 <template>
-	<div class="mlr-a w-152" v-for="(row, i) in minesrow" :key="i" style="display: flex;">
-		<div class="mlr-a" v-for="(data, j) in row" :key="j">
-			<div class="minescell" style="text-align: center; background-color: #eee; border-radius: 4px; margin: 4px;">
-				<a>{{ data }}</a>
+	<div class="mlr-a rowlength" :style="rowlen">
+		<div class="mlr-a" v-for="(row, i) in minesrow" :key="i" style="display: flex;">
+			<div class="minescell" v-for="(data, j) in row" :key="j" style="text-align: center; background-color: #eee; border-radius: 4px; margin: 4px;" v-on:click="digrow[i][j] = true;">
+				<a v-if="digrow[i][j]">{{ data }}</a>
+				<a v-else v-on:click="digrow[i][j] = true"></a>
 			</div>
 		</div>
 	</div>
@@ -13,26 +14,35 @@
 export default {
 	data: () => (
 		{
-			mines: [],
+			digrow: [[false,false,false,false],[false,false,false,false,],[false,false,false,false,],[false,false,false,false,]],
 			minesrow: [['','','',''],['','','',''],['','','',''],['','','','']],
 			minescnt: 4,
+			rowcnt: 4,
 		}
 	),
+	computed: {
+		rowlen() {
+			console.log( this.rowcnt * 32)
+			return {
+				'--rowlen' : this.rowcnt * 32,
+			}
+		}
+	},
 	mounted() {
 
 		for(var i=0; i < this.minescnt; i++)
 		{
-			var x = getRandomInt(4)
-			var y = getRandomInt(4)
+			var x = getRandomInt(this.rowcnt)
+			var y = getRandomInt(this.rowcnt)
 
 			if(this.minesrow[x][y] == "t") { i--;	continue; }
 
 			this.minesrow[x][y] = "t";
 		}
 
-		for(var a = 0; a < this.minescnt; a++)
+		for(var a = 0; a < this.rowcnt; a++)
 		{
-			for(var b = 0; b < this.minescnt; b++)
+			for(var b = 0; b < this.rowcnt; b++)
 			{
 				if (this.minesrow[a][b] == "t") continue;
 
@@ -79,5 +89,9 @@ function getRandomInt(max) {
 .minescell {
 	width: 24px;
 	height: 24px;
+}
+
+.rowlength {
+	width: calc(1px * var(--rowlen));
 }
 </style>
