@@ -1,5 +1,6 @@
 <template>
 	<div class="mlr-a" style="width: 1200px;height: 400px;">
+
 		<div class="mlr-a rowlength" :style="rowlen" style="margin-top: 64px; z-index: 5;">
 			<div class="mlr-a" v-for="(row, i) in minesrow" :key="i" style="display: flex;">
 				<div class="minescell back-e" v-for="(data, j) in row" :key="j" style="font-size: 32px; text-align: center; border-radius: 4px; margin: 4px;" v-on:click.left="minedig(i, j)">
