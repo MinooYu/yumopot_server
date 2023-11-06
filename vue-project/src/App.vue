@@ -23,6 +23,7 @@
 
 	</div>
 
+
 	<div class="mlr-a">
 
 		<div style="width: 400px; display: flex; margin-left: auto; margin-right: auto;">
@@ -191,7 +192,7 @@ export default {
 		minedig: function(i, j) {
 			if (this.mine_dig_flag && this.digrow[i][j] == minesenum.none) { this.digrow[i][j] = minesenum.dig; }
 			else if (!this.mine_dig_flag && this.digrow[i][j] == minesenum.flag) { this.digrow[i][j] = minesenum.none; }
-			else { this.digrow[i][j] = minesenum.flag; }
+			else if (!(this.digrow[i][j] == minesenum.dig)) { this.digrow[i][j] = minesenum.flag; }
 		},
 	}
 }
