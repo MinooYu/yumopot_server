@@ -4,9 +4,9 @@
 		<div class="mlr-a rowlength" :style="rowlen" style="margin-top: 64px; z-index: 5;">
 			<div class="mlr-a" v-for="(row, i) in minesrow" :key="i" style="display: flex;">
 				<div class="minescell back-e" v-for="(data, j) in row" :key="j" style="font-size: 32px; text-align: center; border-radius: 4px; margin: 4px;" v-on:click.left="minedig(i, j)">
-					<div v-if="digrow[i][j] == minesenum.dig" class="minescell back-e">{{ data }}</div>
+					<div v-if="digrow[i][j] == minesenum.dig" class="minescell back-e" style="border-radius: 4px;">{{ data }}</div>
 					<div v-else-if="digrow[i][j] == minesenum.flag" class="minescell back-r" style="width: 100%; height: 100%; border-radius: 4px;"></div>
-					<div v-else class="minescell back-e"></div>
+					<div v-else class="minescell back-e" style="border-radius: 4px;"></div>
 				</div>
 			</div>
 		</div>
