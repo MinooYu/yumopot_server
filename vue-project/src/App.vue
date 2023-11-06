@@ -108,10 +108,6 @@ export default {
 		},
 	},
 	mounted() {
-		this.socket.on("hello", (str, cnt) => {
-			console.log(str);
-			this.connectcnt = cnt;
-		});
 
 		this.canvas = this.$refs.canvas;
     	this.context = this.canvas.getContext("2d");
@@ -119,6 +115,12 @@ export default {
 		this.context.lineJoin = 'round';
 		this.context.lineWidth = 8;
 		this.context.strokeStyle = '#dfb52a';
+
+		// this.context2 = this.canvas.getContext("2d");
+		// this.context2.lineCap = 'round';
+		// this.context2.lineJoin = 'round';
+		// this.context2.lineWidth = 8;
+		// this.context2.strokeStyle = '#dfb52a';
 
 		for(var i=0; i < this.minescnt; i++)
 		{
@@ -156,6 +158,39 @@ export default {
 			}
 		}
 
+		this.socket.on("hello", (str, cnt) => {
+			console.log(str);
+			this.connectcnt = cnt;
+		});
+
+		this.socket.on("dragStart", (x, y) => {
+			this.context.beginPath();
+			this.context.lineTo(x, y);
+			this.context.stroke();
+		});
+
+		this.socket.on("paint", (x, y) => {
+			this.context.lineTo(x, y);
+			this.context.stroke();
+		});
+
+		this.socket.on("dragEnd", () => {
+			this.context.closePath();
+		});
+
+		this.socket.on("clear", () => {
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		});
+		this.socket.on("colorch", (colornum) => {
+			this.context.strokeStyle = colornum;
+		});
+
+		this.socket.on("minedig", (i,j, flagnum) => {
+			// 掘る場所をサーバで共有させる
+			if (this.mine_dig_flag && this.digrow[i][j] == minesenum.none) { this.digrow[i][j] = minesenum.dig; }
+			else if (!this.mine_dig_flag && this.digrow[i][j] == minesenum.flag) { this.digrow[i][j] = minesenum.none; }
+			else if (!(this.digrow[i][j] == minesenum.dig)) { this.digrow[i][j] = minesenum.flag; }
+		});
 	},
 	methods: {
 		paint: function(e){
@@ -173,37 +208,38 @@ export default {
 			var x = e.layerX
 			// var y = e.layerY -24
 			var y = e.layerY
-
-			this.context.lineTo(x, y);
-			this.context.stroke();
+			this.socket.emit("paint", x, y);
 		},
 		clear: function() {
+			this.socket.emit("clear");
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		},
 		colorch: function(colornum, stylenum) {
 			this.context.strokeStyle = colornum;
+
+			this.socket.emit("colorch", colornum);
 
 			this.drawstyle = stylenum;
 			if(this.drawstyle == 0) { this.context.globalCompositeOperation = 'source-over'; this.context.lineWidth = 8; }
 			else if(this.drawstyle == 1) { this.context.globalCompositeOperation = 'destination-out'; this.context.lineWidth = 32; }
 		},
 		dragStart:function(e) {
+			
 			console.log("start")
 			var x = e.layerX
 			// var y = e.layerY -24
 			var y = e.layerY
 
-			this.context.beginPath();
-			this.context.lineTo(x, y);
-			this.context.stroke();
+			this.socket.emit("dragStart", x, y);
 
 			this.isDrag = true;
 		},
 		// 描画終了（mouseup, mouseout）
 		dragEnd: function() {
 			console.log("end")
-			this.context.closePath();
+			this.socket.emit("dragEnd");
 			this.isDrag = false;
+			
 		},
 		minedig: function(i, j) {
 			if (this.mine_dig_flag && this.digrow[i][j] == minesenum.none) { this.digrow[i][j] = minesenum.dig; }

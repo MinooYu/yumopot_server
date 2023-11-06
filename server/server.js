@@ -33,4 +33,25 @@ io.on("connection", async (socket) => {
 
 		io.to('room').emit("hello", 'helllooooo!!', connectedcnt);
 	});
+
+	socket.on("paint", async (x, y) => {
+		io.to('room').emit("paint", x, y);
+	});
+
+	socket.on("dragStart", async (x, y) => {
+		io.to('room').emit("dragStart", x, y);
+	});
+
+	socket.on("dragEnd", async () => {
+		io.to('room').emit("dragEnd");
+	});
+
+	socket.on("colorch", async (colorstr) => {
+		io.to('room').emit("colorch", colorstr);
+	});
+
+	socket.on("clear", async () => {
+		io.to('room').emit("clear");
+	});
+	
 });
