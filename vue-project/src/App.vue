@@ -1,51 +1,64 @@
 <template>
 	<div class="mlr-a" style="width: 1200px;height: 400px;">
-		<div class="mlr-a rowlength" :style="rowlen" style="margin-top: 48px; z-index: 5;">
+		<div class="mlr-a rowlength" :style="rowlen" style="margin-top: 64px; z-index: 5;">
 			<div class="mlr-a" v-for="(row, i) in minesrow" :key="i" style="display: flex;">
-				<div class="minescell" v-for="(data, j) in row" :key="j" style="font-size: 32px; text-align: center; background-color: #eee; border-radius: 4px; margin: 4px;" v-on:click="digrow[i][j] = true;">
-					<a v-if="digrow[i][j]" >{{ data }}</a>
-					<a v-else v-on:click="digrow[i][j] = true"></a>
+				<div class="minescell back-e" v-for="(data, j) in row" :key="j" style="font-size: 32px; text-align: center; border-radius: 4px; margin: 4px;" v-on:click.left="minedig(i, j)">
+					<div v-if="digrow[i][j] == minesenum.dig" class="minescell back-e">{{ data }}</div>
+					<div v-else-if="digrow[i][j] == minesenum.flag" class="minescell back-r" style="width: 100%; height: 100%; border-radius: 4px;"></div>
+					<div v-else class="minescell back-e"></div>
 				</div>
 			</div>
 		</div>
-		<!-- <div v-if="memomode" style="position: absolute; top: 0; z-index: 7;">
-			<canvas ref="canvasElement" style="border: 2px solid #a3a3a3; border-radius: 4px; width: 1200px; height: 400px;"></canvas>
-		</div>
-		<div v-else style="position: absolute; top: 0; z-index: 7; pointer-events: none;">
-			<canvas ref="canvasElement" style="border: 2px solid #a3a3a3; border-radius: 4px; width: 1200px; height: 400px;"></canvas>
-		</div> -->
-		<div :class="drawf" id="main" style="position: absolute; top: 0;">
+
+		<div :class="drawf" id="main" style="position: absolute; top: 0; margin-top: 12px;">
 			<!-- <p style="user-select: none;">X: {{ mouseX }} Y: {{ mouseY }}</p> -->
 			<canvas style="border:1px solid black;" 
-					ref="canvas" width="1200" height="420"
-					v-on:mousemove="paint"
-					v-on:mousedown="dragStart"
-					v-on:mouseup="dragEnd"
-					>
+				ref="canvas" width="1200" height="420"
+				v-on:mousemove="paint"
+				v-on:mousedown="dragStart"
+				v-on:mouseup="dragEnd">
 			</canvas>
 		</div>
+
 	</div>
 
-	
+	<div class="mlr-a">
 
-	<div class="mlr-a" style="width: 400px; display: flex;">
-		<button v-on:click="memomode = !memomode" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
-			メモする
-		</button>
-		<!-- <button v-on:click="" style="width: 120px; margin-left: auto; margin-right: auto;">
-			問題変更
-		</button> -->
+		<div style="width: 400px; display: flex; margin-left: auto; margin-right: auto;">
+			<button v-on:click="memomode = !memomode" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
+				メモする : {{ memomode }}
+			</button>
+			<button v-on:click="" style="width: 120px; margin-left: auto; margin-right: auto;" @click="clear">
+				クリア
+			</button>
+			<button v-on:click="mine_dig_flag = !mine_dig_flag" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
+				掘る : {{ mine_dig_flag }}
+			</button>
+		</div>
+
+		<div style="margin-top: 16px;">
+			<div style="width: 400px; display: flex; margin-left: auto; margin-right: auto;">
+				<div style="margin-left: auto; margin-right: auto;">
+					<button v-on:click="colorch('#df2a2a',0)" style="border: none; background-color: #df2a2a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<button v-on:click="colorch('#dfd32a',0)" style="border: none; background-color: #dfd32a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<button v-on:click="colorch('#2a3cdf',0)" style="border: none; background-color: #2a3cdf; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<button v-on:click="colorch('#252525',0)" style="border: none; background-color: #252525; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<button v-on:click="colorch('#252525',1)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+				</div>
+			</div>
+			<div style="text-align: center; margin-top: 4px;">ペン色を変える</div>
+		</div>
+
 	</div>
 
 	<!-- <DrawTool /> -->
 
-	<!-- <div id="canvas-area">
-		<canvas id="myCanvas" style="border: 2px solid #a3a3a3; border-radius: 4px; width: 1200px; height: 400px;" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
-	</div> -->
 </template>
 
 <script>
 import DrawTool from './components/DrawTool.vue'
+
+const minesenum = {dig:'dig',flag:'flag',none:'none'}
 
 export default {
 	name: 'App',
@@ -55,7 +68,8 @@ export default {
 	el: "#main",
 	data: () => (
 		{
-			digrow: [[false,false,false,false],[false,false,false,false,],[false,false,false,false,],[false,false,false,false,]],
+			minesenum: minesenum,
+			digrow: [[minesenum.none,minesenum.none,minesenum.none,minesenum.none],[minesenum.none,minesenum.none,minesenum.none,minesenum.none],[minesenum.none,minesenum.none,minesenum.none,minesenum.none],[minesenum.none,minesenum.none,minesenum.none,minesenum.none],],
 			minesrow: [['','','',''],['','','',''],['','','',''],['','','','']],
 			minescnt: 4,
 			rowcnt: 4,
@@ -63,6 +77,10 @@ export default {
 			mouseX: 0,
     		mouseY: 0,
 			isDrag: false,
+			mine_dig_flag: true,
+			canvas: null,
+			context: null,
+			drawstyle: 0,
 		}
 	),
 	computed: {
@@ -79,7 +97,10 @@ export default {
 	mounted() {
 		this.canvas = this.$refs.canvas;
     	this.context = this.canvas.getContext("2d");
-
+		this.context.lineCap = 'round';
+		this.context.lineJoin = 'round';
+		this.context.lineWidth = 8;
+		this.context.strokeStyle = '#dfb52a';
 
 		for(var i=0; i < this.minescnt; i++)
 		{
@@ -120,7 +141,6 @@ export default {
 	},
 	methods: {
 		paint: function(e){
-			
 			this.rect = this.canvas.getBoundingClientRect();
 			this.mouseX = e.clientX - this.rect.left;
 			// this.mouseY = e.clientY - this.rect.top -24;
@@ -135,20 +155,30 @@ export default {
 			var x = e.layerX
 			// var y = e.layerY -24
 			var y = e.layerY
-		
+
 			this.context.lineTo(x, y);
 			this.context.stroke();
+		},
+		clear: function() {
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+		colorch: function(colornum, stylenum) {
+			this.context.strokeStyle = colornum;
+
+			this.drawstyle = stylenum;
+			if(this.drawstyle == 0) { this.context.globalCompositeOperation = 'source-over'; this.context.lineWidth = 8; }
+			else if(this.drawstyle == 1) { this.context.globalCompositeOperation = 'destination-out'; this.context.lineWidth = 32; }
 		},
 		dragStart:function(e) {
 			console.log("start")
 			var x = e.layerX
 			// var y = e.layerY -24
 			var y = e.layerY
-		
+
 			this.context.beginPath();
 			this.context.lineTo(x, y);
 			this.context.stroke();
-		
+
 			this.isDrag = true;
 		},
 		// 描画終了（mouseup, mouseout）
@@ -156,7 +186,12 @@ export default {
 			console.log("end")
 			this.context.closePath();
 			this.isDrag = false;
-		}
+		},
+		minedig: function(i, j) {
+			if (this.mine_dig_flag && this.digrow[i][j] == minesenum.none) { this.digrow[i][j] = minesenum.dig; }
+			else if (!this.mine_dig_flag && this.digrow[i][j] == minesenum.flag) { this.digrow[i][j] = minesenum.none; }
+			else { this.digrow[i][j] = minesenum.flag; }
+		},
 	}
 }
 
@@ -190,5 +225,10 @@ function getRandomInt(max) {
 .draw-f {
 	pointer-events: none;
 }
-
+.back-e {
+	background-color: #eee;
+}
+.back-r {
+	background-color: #df2a2a;
+}
 </style>
