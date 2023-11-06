@@ -50,7 +50,7 @@
 			</div>
 			<div style="text-align: center; margin-top: 4px;">ペン色を変える</div>
 		</div>
-
+		<div class="mlr-a"><div style="text-align: center;"> connect! * {{ connectcnt }} </div></div>
 	</div>
 
 	<!-- <DrawTool /> -->
@@ -58,7 +58,9 @@
 </template>
 
 <script>
+import { pushScopeId } from 'vue';
 import DrawTool from './components/DrawTool.vue'
+import io from "socket.io-client";
 
 const minesenum = {dig:'dig',flag:'flag',none:'none'}
 
@@ -83,8 +85,17 @@ export default {
 			canvas: null,
 			context: null,
 			drawstyle: 0,
+
+			socket: io("http://localhost:3031"),
+			connectcnt: 0,
 		}
 	),
+	created() {
+		this.socket.on("connect", () => {
+			console.log("connected");
+			this.socket.emit("helloroom");
+		});
+	},
 	computed: {
 		rowlen() {
 			console.log( this.rowcnt * 72)
@@ -97,6 +108,11 @@ export default {
 		},
 	},
 	mounted() {
+		this.socket.on("hello", (str, cnt) => {
+			console.log(str);
+			this.connectcnt = cnt;
+		});
+
 		this.canvas = this.$refs.canvas;
     	this.context = this.canvas.getContext("2d");
 		this.context.lineCap = 'round';
