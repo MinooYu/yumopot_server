@@ -24,8 +24,6 @@ export default {
 		this.context.lineJoin = 'round';
 		this.context.lineWidth = 5;
 		this.context.strokeStyle = '#000000';
-		this.context.fillStyle = "blue";
-		this.context.fillRect(10, 10, 150, 150);
 	},
 	methods: {
 		// 描画
