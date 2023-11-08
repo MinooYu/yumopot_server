@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require("http");
+const { log } = require("console");
+const { Socket } = require("net");
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,6 +18,7 @@ var server = http.createServer(app);
 server.listen(3031);
 var users = [];
 var connectedcnt = 0
+const rooms = [];
 
 const io = require("socket.io")(server, {
 	cors: {
@@ -52,6 +55,23 @@ io.on("connection", async (socket) => {
 
 	socket.on("clear", async () => {
 		io.to('room').emit("clear");
+	});
+
+	socket.on("roomcreate", async (roomid) => {
+		const room = {id: roomid, users: []}
+		const roomIndex = rooms.findIndex((r) => r.id == roomid);
+		if(roomIndex != -1) {rooms[roomIndex].users.push(socket.id)}
+		else { room.users.push(socket.id); rooms.push(room); }
+	});
+
+	socket.on("roomview", async () => {
+		io.to(socket.id).emit("roomview", rooms);
+	});
+	
+	socket.on("joinroom", async (roomId) => {
+		const roomIndex = rooms.findIndex((r) => r.id == roomId);
+		var room = rooms[roomIndex];
+		room.users.push(socket.id)
 	});
 	
 });
