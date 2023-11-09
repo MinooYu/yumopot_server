@@ -93,7 +93,7 @@ export default {
 	created() {
 		this.socket.on("connect", () => {
 			console.log("connected");
-			this.socket.emit("helloroom");
+			this.socket.emit("joinmineswiper");
 		});
 	},
 	computed: {

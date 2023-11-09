@@ -11,7 +11,7 @@ const routes = [
 	{ path: '/', name: 'first', component: First },
 	{ path: '/App', name: 'app', component: App },
 	{ path: '/Home', name: 'home', component: Home },
-	{ path: '/Room/:id', name: 'room', component: Room },
+	{ path: '/Room/:id', name: 'room', component: Room, props: route => ({id: route.params.id}),},
 ]
 
 const router = createRouter({
