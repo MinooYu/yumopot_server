@@ -1,16 +1,21 @@
 <template>
 	<div class="mlr-a" style="width: 1200px;">
+
 		<div class="mlr-a" style="width: 124px;  margin-top: 12px;">
 			<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
-			<router-link :to="{name: 'room', params: {id: roomid}}" style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="joinroom">to room</router-link>
+			<router-link :to="{name: 'room', params: {id: roomid}}" style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;">to room</router-link>
 		</div>
+
 		<div class="mlr-a" style="width: 124px; margin-top: 12px;">
 			<button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="roomview">rooms view</button>
 		</div>
+
 		<p style="margin-top: 12px; text-align: center;">{{ roomid }}</p>
+
 		<div style="margin-top: 12px;">
 			<p v-for="(data, i) in rooms" :key="i" style="text-align: center;"> {{ data }}</p>
 		</div>
+
 	</div>
 </template>
 
@@ -53,6 +58,7 @@ export default {
 		},
 		joinroom() {
 			this.socket.emit("roomcreate", this.roomid);
+			this.socket.emit("joinroom", this.roomid);
 		},
 		roomview() {
 			this.socket.emit("roomview");
