@@ -1,8 +1,8 @@
 <template>
-	<!-- <div v-if="!flag" style="width: 1200px; margin-left: auto; margin-right: auto; text-align: center;">
+	<div v-if="!flag" style="width: 1200px; margin-left: auto; margin-right: auto; text-align: center;">
 		<router-link :to="{name: 'home'}" v-on:click="flag = true" style="margin-right: 12px;">to home</router-link>
 		<router-link :to="{name: 'app'}" v-on:click="flag = true">to app</router-link>
-	</div> -->
+	</div>
 	
 	<!-- <router-view v-if="flag" /> -->
 	<router-view />
