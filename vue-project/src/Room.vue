@@ -1,7 +1,7 @@
 <template>
 	<!-- <div style="margin-left: auto; margin-right: auto;"><button :v-on:click="sendposts(sendmes)">send posts</button></div> -->
 	<div class="mlr-a" style="width: 1200px;">
-		<p style="margin-top: 12px; text-align: center;">{{ $route.params.id }}</p>
+		<p style="margin-top: 12px; text-align: center;">roomid : {{ $route.params.id }}</p>
 	</div>
 	
 	<div class="mlr-a" style="width: 1200px;">
@@ -20,7 +20,7 @@
 	<div><a style="color: red;">{{ message }}</a></div>
 
 	<div class="mlr-a" style="width: 1200px;">
-		<div v-for="(post, i) in posts" :key="i" style="margin-left: auto; margin-right: auto; text-align: center;"><a>{{ post }}</a></div>
+		<div v-for="(post, i) in posts" :key="i" style=" width: 564px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"><a>{{ post.name }} : </a><a>{{ post.post }}</a></div>
 	</div>
 
 </template>
