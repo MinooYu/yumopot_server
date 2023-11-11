@@ -6,12 +6,16 @@ import App from './App.vue'
 import Home from './Home.vue'
 import First from './First.vue'
 import Room from './Room.vue'
+import Linkhead from './linkhead.vue'
+
 
 const routes = [
 	{ path: '/', name: 'first', component: First },
 	{ path: '/App', name: 'app', component: App },
 	{ path: '/Home', name: 'home', component: Home },
+	{ path: '/Link', name: 'linkhead', component: Linkhead },
 	{ path: '/Room/:id', name: 'room', component: Room, props: route => ({id: route.params.id}),},
+	
 ]
 
 const router = createRouter({

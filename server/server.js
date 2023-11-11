@@ -17,6 +17,7 @@ app.use(cors({
 var server = http.createServer(app);
 server.listen(3031);
 var users = [];
+var Canvas = [];
 var connectedcnt = 0
 const rooms = [];
 const minesroom = {id: "mineswiper_room", users: [], posts: []}
@@ -31,35 +32,52 @@ const io = require("socket.io")(server, {
 io.on("connection", async (socket) => {
 	connectedcnt ++;
 
-	socket.on("joinmineswiper", async () => {
-		const user = { id: socket.id };
-		users.push(user);
-		
-		socket.join('mineswiper_room');
-		io.to('mineswiper_room').emit("hello", 'helllooooo!!', connectedcnt);
+	// socket.on("joinmineswiper", async () => {
+	// 	socket.join('mineswiper_room');
+	// 	io.to('mineswiper_room').emit("hello", 'helllooooo!!', connectedcnt);
+	// });
+	socket.on("initcanvas", async (roomid, canvasitem) => {
+		const Canvasindex = Canvas.findIndex((r) => r.id == roomid);
+		if(Canvasindex != -1) {
+			io.to(roomid).emit("canvas", Canvas[Canvasindex].canvas);
+		}
+		else { 
+			var canvas = {id: roomid, canvas: canvasitem}
+			Canvas.push(canvas);
+		}
 	});
 
-	socket.on("paint", async (x, y) => {
-		io.to('mineswiper_room').emit("paint", x, y);
+	socket.on("canvas", async (roomid, canvasitem) => {
+		const Canvasindex = Canvas.findIndex((r) => r.id == roomid);
+		if(Canvasindex != -1) { Canvas[Canvasindex].canvas = canvasitem; io.to(roomid).emit("canvas", Canvas[Canvasindex].canvas); }
+		else { 
+			return
+		}
 	});
 
-	socket.on("dragStart", async (x, y) => {
-		io.to('mineswiper_room').emit("dragStart", x, y);
+	socket.on("paint", async (roomid, x, y) => {
+		io.to(roomid).emit("paint", x, y);
 	});
 
-	socket.on("dragEnd", async () => {
-		io.to('mineswiper_room').emit("dragEnd");
+	socket.on("dragStart", async (roomid, x, y) => {
+		io.to(roomid).emit("dragStart", x, y);
 	});
 
-	socket.on("colorch", async (colorstr) => {
-		io.to('mineswiper_room').emit("colorch", colorstr);
+	socket.on("dragEnd", async (roomid) => {
+		io.to(roomid).emit("dragEnd");
 	});
 
-	socket.on("clear", async () => {
-		io.to('mineswiper_room').emit("clear");
+	socket.on("colorch", async (roomid, colorstr, stylenum) => {
+		io.to(roomid).emit("colorch", colorstr, stylenum);
 	});
 
-
+	socket.on("widthch", async (roomid, linewidth) => {
+		io.to(roomid).emit("widthch", linewidth);
+	});
+	
+	socket.on("clear", async (roomid) => {
+		io.to(roomid).emit("clear");
+	});
 
 
 	socket.on("roomcreate", async (roomid) => {
@@ -69,15 +87,23 @@ io.on("connection", async (socket) => {
 		else { rooms.push(room); }
 	});
 
-	socket.on("roomview", async () => {
-		io.to(socket.id).emit("roomview", rooms);
-	});
-	
 	socket.on("joinroom", async (roomid) => {
+		const user = { id: socket.id, roomid: roomid };
+		users.push(user);
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		var room = rooms[roomIndex];
 		room.users.push(socket.id)
 		socket.join(roomid);
+	});
+
+	socket.on("roomview", async () => {
+		io.to(socket.id).emit("roomview", rooms);
+	});
+	
+	socket.on("roominuser", async (roomid) => {
+		const roomIndex = rooms.findIndex((r) => r.id == roomid);
+		if(roomIndex != -1) { io.to(rooms[roomIndex].id).emit("roominuser", rooms[roomIndex].users); console.log(rooms[roomIndex].users)}
+		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 
 	socket.on("viewposts", async (roomid) => {
@@ -86,9 +112,9 @@ io.on("connection", async (socket) => {
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 
-	socket.on("sendposts", async (roomid,name, post) => {
+	socket.on("sendposts", async (roomid, name, post, color) => {
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
-		if(roomIndex != -1) { var postdata = { "name" : name, "post": post};rooms[roomIndex].posts.push(postdata); io.to(rooms[roomIndex].id).emit("viewposts", rooms[roomIndex].posts);}
+		if(roomIndex != -1) { var postdata = { "name" : name, "post": post,"color": color}; console.log(postdata); rooms[roomIndex].posts.push(postdata); io.to(rooms[roomIndex].id).emit("viewpost", postdata);}
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 });
