@@ -20,7 +20,8 @@
 				ref="canvas" width="840" height="460"
 				v-on:mousemove="paint"
 				v-on:mousedown="dragStart"
-				v-on:mouseup="dragEnd">
+				v-on:mouseup="dragEnd"
+				>
 			</canvas>
 		</div>
 
@@ -58,6 +59,8 @@
 		</div>
 		<div class="mlr-a"><div style="text-align: center;"> connect! * {{ connectcnt }} </div></div>
 		<div class="mlr-a"><div style="text-align: center;"> {{ roomid }} </div></div>
+		<!-- <div class="mlr-a"><div style="text-align: center;"> {{ drawimg }} </div></div> -->
+		<!-- <div class="mlr-a"><div style="text-align: center;"><img :src="drawimg"></div></div> -->
 	</div>
 
 	<!-- <DrawTool /> -->
@@ -96,6 +99,7 @@ export default {
 			linewid: 1,
 			connectcnt: 0,
 			nowpath: null, 
+			drawimg: null,
 		}
 	),
 	created() {
@@ -127,7 +131,7 @@ export default {
 		this.context.lineWidth = 1;
 		this.context.strokeStyle = '#dfb52a';
 
-		this.socket.emit("initcanvas", this.roomid, this.canvas);
+		this.socket.emit("initcanvas", this.roomid, this.drawimg);
 
 		// this.context2 = this.canvas.getContext("2d");
 		// this.context2.lineCap = 'round';
@@ -191,8 +195,16 @@ export default {
 		this.socket.on("dragEnd", () => {
 			console.log("end")
 			this.nowpath = this.context.closePath();
+		});
 
-			this.socket.emit("canvas", this.roomid, this.canvas);
+		this.socket.on("canvas", (canvasimgurl) => {
+			this.drawimg = canvasimgurl
+			console.log(this.drawimg)
+			const chara = new Image();
+			chara.src = this.drawimg;
+			chara.onload = () => {
+				this.context.drawImage(chara, 0, 0, 840, 460)
+			};
 		});
 
 		this.socket.on("clear", () => {
@@ -253,6 +265,25 @@ export default {
 		dragEnd: function() {
 			this.socket.emit("dragEnd", this.roomid);
 			this.isDrag = false;
+
+			var nowDate = new Date();
+			var year = nowDate.getFullYear();
+			var month = nowDate.getMonth()+1;
+			var date = nowDate.getDate();
+			var hor = nowDate.getHours();
+			var min = nowDate.getMinutes();
+			var sec = nowDate.getSeconds();
+
+			var now = year + '_' + month + '_' + date + '_' + hor + '_' + min + '_' + sec;
+
+			// const a = document.createElement("a");
+			// a.href = this.canvas.toDataURL("image/png", 1); // PNGなら"image/png"
+			// a.download = now + ".png";
+			// this.drawimg = this.canvas.toDataURL("image/png", 1)
+			this.socket.emit("canvas", this.roomid, this.canvas.toDataURL("image/png", 1));
+
+			// var base64 = this.canvas.toDataURL("image/png");
+			// this.canvas.href = base64;
 		},
 		minedig: function(i, j) {
 			if (this.mine_dig_flag && this.digrow[i][j] == minesenum.none) { this.digrow[i][j] = minesenum.dig; }

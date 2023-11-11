@@ -39,18 +39,17 @@ io.on("connection", async (socket) => {
 	socket.on("initcanvas", async (roomid, canvasitem) => {
 		const Canvasindex = Canvas.findIndex((r) => r.id == roomid);
 		if(Canvasindex != -1) {
-			// io.to(roomid).emit("initcanvas", Canvas[Canvasindex].canvas);
+			io.to(roomid).emit("canvas", Canvas[Canvasindex].canvas);
 		}
 		else { 
 			var canvas = {id: roomid, canvas: canvasitem}
 			Canvas.push(canvas);
-
 		}
 	});
 
 	socket.on("canvas", async (roomid, canvasitem) => {
 		const Canvasindex = Canvas.findIndex((r) => r.id == roomid);
-		if(Canvasindex != -1) { Canvas[Canvasindex].canvas = canvasitem }
+		if(Canvasindex != -1) { Canvas[Canvasindex].canvas = canvasitem; io.to(roomid).emit("canvas", Canvas[Canvasindex].canvas); }
 		else { 
 			return
 		}
