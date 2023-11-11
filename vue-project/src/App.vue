@@ -1,7 +1,9 @@
 <template>
-	<div class="mlr-a" style="width: 1200px;height: 400px;">
+	<div style="width: 840px; height: 460px;">
 
-		<div class="mlr-a rowlength" :style="rowlen" style="margin-top: 64px; z-index: 5;">
+		<!-- まいんすいーぱーの箇所 コメントアウト -->
+
+		<!-- <div class="mlr-a rowlength" :style="rowlen" style="margin-top: 64px; z-index: 5;">
 			<div class="mlr-a" v-for="(row, i) in minesrow" :key="i" style="display: flex;">
 				<div class="minescell back-e" v-for="(data, j) in row" :key="j" style="font-size: 32px; text-align: center; border-radius: 4px; margin: 4px;" v-on:click.left="minedig(i, j)">
 					<div v-if="digrow[i][j] == minesenum.dig" class="minescell back-e" style="border-radius: 4px;">{{ data }}</div>
@@ -9,12 +11,13 @@
 					<div v-else class="minescell back-e" style="border-radius: 4px;"></div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
-		<div :class="drawf" id="main" style="position: absolute; top: 0; margin-top: 12px;">
+		<!-- <div :class="drawf" id="main" style="position: absolute; top: 0; margin-top: 32px;"> -->
+		<div :class="drawf" id="main">
 			<!-- <p style="user-select: none;">X: {{ mouseX }} Y: {{ mouseY }}</p> -->
-			<canvas style="border:1px solid black;" 
-				ref="canvas" width="1200" height="420"
+			<canvas style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px;"
+				ref="canvas" width="840" height="460"
 				v-on:mousemove="paint"
 				v-on:mousedown="dragStart"
 				v-on:mouseup="dragEnd">
@@ -26,31 +29,35 @@
 
 	<div class="mlr-a">
 
-		<div style="width: 400px; display: flex; margin-left: auto; margin-right: auto;">
+		<div style="width: 320px; display: flex; margin-left: auto; margin-right: auto; margin-top: 12px;">
 			<button v-on:click="memomode = !memomode" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
 				メモする : {{ memomode }}
 			</button>
 			<button v-on:click="" style="width: 120px; margin-left: auto; margin-right: auto;" @click="clear">
 				クリア
 			</button>
-			<button v-on:click="mine_dig_flag = !mine_dig_flag" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
+			<!-- マインスイーパ機能 -->
+			<!-- <button v-on:click="mine_dig_flag = !mine_dig_flag" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
 				掘る : {{ mine_dig_flag }}
-			</button>
+			</button> -->
 		</div>
 
-		<div style="margin-top: 16px;">
-			<div style="width: 400px; display: flex; margin-left: auto; margin-right: auto;">
+		<div style="margin-top: 8px;">
+			<div style="width: 320px; display: flex; margin-left: auto; margin-right: auto;">
 				<div style="margin-left: auto; margin-right: auto;">
 					<button v-on:click="colorch('#df2a2a',0)" style="border: none; background-color: #df2a2a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#dfd32a',0)" style="border: none; background-color: #dfd32a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#2a3cdf',0)" style="border: none; background-color: #2a3cdf; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#252525',0)" style="border: none; background-color: #252525; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
-					<button v-on:click="colorch('#252525',1)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<button v-on:click="colorch('#fff',1)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 				</div>
 			</div>
 			<div style="text-align: center; margin-top: 4px;">ペン色を変える</div>
+			<div style="text-align: center; margin-top: 4px;"><label>ペンの太さ</label><input type="range" name="speed" min="1" max="32" v-model="linewid" style=""><label style="margin-left: 4px;">{{ linewid }}</label></div>
+
 		</div>
 		<div class="mlr-a"><div style="text-align: center;"> connect! * {{ connectcnt }} </div></div>
+		<div class="mlr-a"><div style="text-align: center;"> {{ roomid }} </div></div>
 	</div>
 
 	<!-- <DrawTool /> -->
@@ -66,6 +73,7 @@ const minesenum = {dig:'dig',flag:'flag',none:'none'}
 
 export default {
 	name: 'App',
+	props: ['roomid', 'socket'],
 	components: {
 		DrawTool
 	},
@@ -85,15 +93,15 @@ export default {
 			canvas: null,
 			context: null,
 			drawstyle: 0,
-
-			socket: io("http://localhost:3031"),
+			linewid: 1,
 			connectcnt: 0,
+			nowpath: null, 
 		}
 	),
 	created() {
+		// var socket =  this.socket
 		this.socket.on("connect", () => {
-			console.log("connected");
-			this.socket.emit("joinmineswiper");
+			// this.socket.emit("joinmineswiper");
 		});
 	},
 	computed: {
@@ -107,14 +115,19 @@ export default {
 			if(!this.memomode) return 'draw-f'
 		},
 	},
+	watch: {
+	},
 	mounted() {
 
 		this.canvas = this.$refs.canvas;
+
     	this.context = this.canvas.getContext("2d");
 		this.context.lineCap = 'round';
 		this.context.lineJoin = 'round';
-		this.context.lineWidth = 8;
+		this.context.lineWidth = 1;
 		this.context.strokeStyle = '#dfb52a';
+
+		this.socket.emit("initcanvas", this.roomid, this.canvas);
 
 		// this.context2 = this.canvas.getContext("2d");
 		// this.context2.lineCap = 'round';
@@ -164,7 +177,8 @@ export default {
 		});
 
 		this.socket.on("dragStart", (x, y) => {
-			this.context.beginPath();
+			console.log("start")
+			this.nowpath = this.context.beginPath();
 			this.context.lineTo(x, y);
 			this.context.stroke();
 		});
@@ -175,14 +189,23 @@ export default {
 		});
 
 		this.socket.on("dragEnd", () => {
-			this.context.closePath();
+			console.log("end")
+			this.nowpath = this.context.closePath();
+
+			this.socket.emit("canvas", this.roomid, this.canvas);
 		});
 
 		this.socket.on("clear", () => {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		});
-		this.socket.on("colorch", (colornum) => {
+		this.socket.on("colorch", (colornum, stylenum) => {
 			this.context.strokeStyle = colornum;
+			this.drawstyle = stylenum;
+			if(this.drawstyle == 0) { this.context.globalCompositeOperation = 'source-over'; }
+			else if(this.drawstyle == 1) { this.context.globalCompositeOperation = 'destination-out'; }
+		});
+		this.socket.on("widthch", (linewidth) => {
+			this.context.lineWidth = linewidth;
 		});
 
 		this.socket.on("minedig", (i,j, flagnum) => {
@@ -195,51 +218,41 @@ export default {
 	methods: {
 		paint: function(e){
 			this.rect = this.canvas.getBoundingClientRect();
-			this.mouseX = e.clientX - this.rect.left;
-			// this.mouseY = e.clientY - this.rect.top -24;
-			this.mouseY = e.clientY - this.rect.top;
 
 			if(!this.isDrag) {
 				return;
 			}
-
 			// this.context.fillRect(this.mouseX, this.mouseY, 2, 2);
 
-			var x = e.layerX
+			var x = e.pageX - this.rect.left
 			// var y = e.layerY -24
-			var y = e.layerY
-			this.socket.emit("paint", x, y);
+			var y = e.pageY - this.rect.top
+			this.socket.emit("paint", this.roomid, x, y);
 		},
 		clear: function() {
-			this.socket.emit("clear");
+			this.socket.emit("clear", this.roomid);
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		},
 		colorch: function(colornum, stylenum) {
 			this.context.strokeStyle = colornum;
 
-			this.socket.emit("colorch", colornum);
-
-			this.drawstyle = stylenum;
-			if(this.drawstyle == 0) { this.context.globalCompositeOperation = 'source-over'; this.context.lineWidth = 8; }
-			else if(this.drawstyle == 1) { this.context.globalCompositeOperation = 'destination-out'; this.context.lineWidth = 32; }
+			this.socket.emit("colorch", this.roomid, colornum, stylenum);
 		},
 		dragStart:function(e) {
-			
-			console.log("start")
-			var x = e.layerX
+			var x = e.pageX - this.rect.left
 			// var y = e.layerY -24
-			var y = e.layerY
+			var y = e.pageY - this.rect.top
 
-			this.socket.emit("dragStart", x, y);
+			this.context.lineWidth = this.linewid;
+			this.socket.emit("widthch", this.roomid, this.linewid);
+			this.socket.emit("dragStart", this.roomid, x, y);
 
 			this.isDrag = true;
 		},
 		// 描画終了（mouseup, mouseout）
 		dragEnd: function() {
-			console.log("end")
-			this.socket.emit("dragEnd");
+			this.socket.emit("dragEnd", this.roomid);
 			this.isDrag = false;
-			
 		},
 		minedig: function(i, j) {
 			if (this.mine_dig_flag && this.digrow[i][j] == minesenum.none) { this.digrow[i][j] = minesenum.dig; }

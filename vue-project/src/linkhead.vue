@@ -1,11 +1,11 @@
 <template>
-	<div style="width: 564px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; background-color: #d4d4d4;">
+	<div v-if="!flag" style="width: 1200px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; background-color: #d4d4d4;">
 		<router-link :to="{name: 'home'}" v-on:click="flag = true" style="margin-right: 12px;">to home</router-link>
 		<router-link :to="{name: 'app'}" v-on:click="flag = true">to app</router-link>
 	</div>
 	
 	<!-- <router-view v-if="flag" /> -->
-	<router-view v-if="flag" />
+	<!-- <router-view /> -->
 </template>
 
 <script>
@@ -28,21 +28,7 @@ export default {
             this.socket.emit("helloroom");
         });
     },
-	watch: {
-		$route(newRoute, oldRoute) {
-			const path = newRoute.fullPath
-			console.log(newRoute)
-
-			if (path == "/") {
-				this.flag = false
-			}
-			else {
-				this.flag = true
-			}
-		},
-	},
-    computed: {
-	},
+    computed: {},
     mounted() {
         this.socket.on("hello", (str, cnt) => {
             console.log(str);
