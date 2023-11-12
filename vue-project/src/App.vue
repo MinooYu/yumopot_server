@@ -53,12 +53,15 @@
 					<button v-on:click="colorch('#fff',1)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 				</div>
 			</div>
-			<div style="text-align: center; margin-top: 4px;">ペン色を変える</div>
-			<div style="text-align: center; margin-top: 4px;"><label>ペンの太さ</label><input type="range" name="speed" min="1" max="32" v-model="linewid" style=""><label style="margin-left: 4px;">{{ linewid }}</label></div>
-
+			<div style="text-align: center; margin-top: 4px;"><input type="range" name="speed" min="1" max="36" v-model="linewid" style=""><label style="margin-left: 4px;">{{ linewid }}</label></div>
+			<div style="display: flex; width: 120px; margin-left: auto; margin-right: auto; align-items: center;">
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 8px; height: 8px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(8)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(12)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 16px; height: 16px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(16)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 24px; height: 24px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(24)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 36px; height: 36px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(36)"></div>
+			</div>
 		</div>
-		<div class="mlr-a"><div style="text-align: center;"> connect! * {{ connectcnt }} </div></div>
-		<div class="mlr-a"><div style="text-align: center;"> {{ roomid }} </div></div>
 		<!-- <div class="mlr-a"><div style="text-align: center;"> {{ drawimg }} </div></div> -->
 		<!-- <div class="mlr-a"><div style="text-align: center;"><img :src="drawimg"></div></div> -->
 	</div>
@@ -69,7 +72,6 @@
 
 <script>
 import { pushScopeId } from 'vue';
-import DrawTool from './components/DrawTool.vue'
 import io from "socket.io-client";
 
 const minesenum = {dig:'dig',flag:'flag',none:'none'}
@@ -78,7 +80,6 @@ export default {
 	name: 'App',
 	props: ['roomid', 'socket'],
 	components: {
-		DrawTool
 	},
 	el: "#main",
 	data: () => (
@@ -100,6 +101,7 @@ export default {
 			connectcnt: 0,
 			nowpath: null, 
 			drawimg: null,
+			colornum: "#fff",
 		}
 	),
 	created() {
@@ -118,6 +120,12 @@ export default {
 		drawf() {
 			if(!this.memomode) return 'draw-f'
 		},
+		colnum() {
+			return {
+				'--colnum' : this.colornum
+			}
+		}
+		
 	},
 	watch: {
 	},
@@ -193,8 +201,8 @@ export default {
 		});
 
 		this.socket.on("dragEnd", () => {
-			console.log("end")
 			this.nowpath = this.context.closePath();
+			console.log("end")
 		});
 
 		this.socket.on("canvas", (canvasimgurl) => {
@@ -210,12 +218,15 @@ export default {
 		this.socket.on("clear", () => {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		});
+
 		this.socket.on("colorch", (colornum, stylenum) => {
+			this.colornum = colornum;
 			this.context.strokeStyle = colornum;
 			this.drawstyle = stylenum;
 			if(this.drawstyle == 0) { this.context.globalCompositeOperation = 'source-over'; }
 			else if(this.drawstyle == 1) { this.context.globalCompositeOperation = 'destination-out'; }
 		});
+
 		this.socket.on("widthch", (linewidth) => {
 			this.context.lineWidth = linewidth;
 		});
@@ -246,9 +257,13 @@ export default {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		},
 		colorch: function(colornum, stylenum) {
+			this.colornum = colornum
 			this.context.strokeStyle = colornum;
 
 			this.socket.emit("colorch", this.roomid, colornum, stylenum);
+		},
+		pensizech(num) {
+			this.linewid = num;
 		},
 		dragStart:function(e) {
 			var x = e.pageX - this.rect.left
@@ -328,5 +343,8 @@ function getRandomInt(max) {
 }
 .back-r {
 	background-color: #df2a2a;
+}
+.colcell {
+	background-color: var(--colnum);
 }
 </style>
