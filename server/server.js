@@ -79,6 +79,42 @@ io.on("connection", async (socket) => {
 		io.to(roomid).emit("clear");
 	});
 
+	socket.on("disconnect", () => {
+		const user = users.find((u) => u.id == socket.id);
+		if(!user) {
+			return;
+		}
+
+		const roomIndex = rooms.findIndex((r) => r.id == user.roomId);
+		const room = rooms[roomIndex];
+		const userIndex = room.users.findIndex((u) => u.id == socket.id);
+
+		// if(userIndex == room.turnUserIndex) {
+		// 	rooms[roomIndex].turnUserIndex = getNextTurnUserIndex(room);
+		// }
+
+		rooms[roomIndex].users.splice(userIndex, 1);
+		users.splice(
+			users.findIndex((u) => u.ic == socket.id),
+			1
+		);
+		
+		// if (room.turnUserIndex > userIndex) {
+		// 	rooms[roomIndex].turnUserIndex--;
+		// }
+
+		// io.in(room.id).emit(
+		// 	"notifyDisconnection",
+		// 	user.name,
+		// 	room.usres[rooms[roomIndex].turnUserIndex].name
+		// );
+		io.in(room.id).emit(
+			"notifyDisconnection",
+			user.name,
+			// room.usres[rooms[roomIndex].turnUserIndex].name
+		);
+	});
+
 
 	socket.on("roomcreate", async (roomid) => {
 		const room = {id: roomid, users: [], posts: []}
