@@ -1,10 +1,21 @@
 <template>
-	<div style="width: 564px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; background-color: #d4d4d4;">
-		<router-link :to="{name: 'home'}" v-on:click="flag = true" style="margin-right: 12px;">to home</router-link>
-		<router-link :to="{name: 'app'}" v-on:click="flag = true">to app</router-link>
+	<div style="width: 100%; padding: 12px 16px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; background-color: #eee; display: flex;">
+		<div style="width: 33%; display: flex;">
+			<div style="right: 0; 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+		</div>
+		<div style="width: 34%; display: flex;">
+			<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 20px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
+			<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 20px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
+			<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 20px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
+			<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 20px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
+		</div>
+		<div style="width: 33%; display: flex; flex-direction: row-reverse;">
+			<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+			<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+			<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+		</div>
 	</div>
-	
-	<!-- <router-view v-if="flag" /> -->
+
 	<router-view v-if="flag" />
 </template>
 

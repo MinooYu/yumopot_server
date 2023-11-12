@@ -123,14 +123,38 @@ io.on("connection", async (socket) => {
 		else { rooms.push(room); }
 	});
 
-	socket.on("joinroom", async (roomid) => {
-		const user = { id: socket.id, roomid: roomid };
+	socket.on("joinroom", async (roomid, name) => {
+		const user = { id: socket.id, roomid: roomid, name: name };
 		users.push(user);
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		var room = rooms[roomIndex];
-		room.users.push(socket.id)
+
+		console.log(name)
+		room.users.push(user)
 		socket.join(roomid);
 	});
+
+	socket.on("namech", async (roomid, name) => {
+		// const user = { id: socket.id, roomid: roomid, name: name };
+		// users.push(user);
+		console.log("namech");
+		console.log("roomid  " + roomid)
+
+		const roomIndex = rooms.findIndex((r) => r.id == roomid);
+		if( roomIndex == -1) return;
+
+		console.log("roominuser")
+
+		const userIndex = rooms[roomIndex].users.findIndex((u) => u.id == socket.id);
+		if (userIndex != -1) {
+			rooms[roomIndex].users[userIndex].name = name
+			io.to(rooms[roomIndex].id).emit("roominuser", rooms[roomIndex].users);
+			console.log(rooms[roomIndex].users)
+		 }
+		
+	});
+
+	
 
 	socket.on("roomview", async () => {
 		io.to(socket.id).emit("roomview", rooms);
@@ -150,7 +174,12 @@ io.on("connection", async (socket) => {
 
 	socket.on("sendposts", async (roomid, name, post, color) => {
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
-		if(roomIndex != -1) { var postdata = { "name" : name, "post": post,"color": color}; console.log(postdata); rooms[roomIndex].posts.push(postdata); io.to(rooms[roomIndex].id).emit("viewpost", postdata);}
+		if(roomIndex != -1) {
+			var postdata = { "name" : name, "post": post,"color": color};
+
+			console.log(postdata); rooms[roomIndex].posts.push(postdata);
+			io.to(rooms[roomIndex].id).emit("viewpost", postdata);
+		}
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 });

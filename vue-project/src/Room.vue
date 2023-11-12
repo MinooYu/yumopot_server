@@ -6,15 +6,12 @@
 		</div>
 		<div style="width: 320px;">
 			<div class="mlr-a" style="width: 320px;">
-				<p style="margin-top: 4px; text-align: center;">roomid : {{ $route.params.id }}</p>
-			</div>
-			
-			<div class="mlr-a" style="width: 320px;">
 				<div style="margin-top: 12px; width: 280px; margin-left: auto; margin-right: auto;">
 					<div>
-						<input type="text" v-model="name" class="border-2 border-gray-400 rounded" placeholder="名前を変更" style="width: 100%; text-align: center; padding: 2px 4px; height: 24px; border-radius: 4px; border: 0.4px solid #777;"/>
+						<form  @submit.prevent="namech(name)">
+							<input type="text" v-model="name" class="border-2 border-gray-400 rounded" placeholder="名前を変更" style="width: 100%; text-align: center; padding: 2px 4px; height: 24px; border-radius: 4px; border: 0.4px solid #777;"/>
+						</form>
 						<input type="color" v-model="mycolor" style="width: 280px; margin-top: 4px;" />
-						<a>{{ mycolor }}</a>
 					</div>
 					<div style="margin-top: 6px;">
 						<form  @submit.prevent="sendposts(input)">
@@ -32,13 +29,13 @@
 
 
 			<div class="mlr-a" id="scroller" style="width: 320px; height: 232px; margin-top: 8px; overflow-y: scroll;">
-				<div v-for="(post, i) in posts" :key="i" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
+				<div v-for="(post, i) in posts" :key="i" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: left; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
 			</div>
 			<div class="mlr-a" style="width: 320px; margin-top: 8px;">
 				<div style="width: 152px; margin-bottom: 8px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"> users:{{ users.length }}</div>
 			</div>
 			<div class="mlr-a" style="width: 320px; height: 124px; margin-top: 8px; overflow-y: scroll;">
-				<div v-for="(user, j) in users" :key="j" style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 4px;"><a>{{ user }}</a></div>
+				<div v-for="(user, j) in users" :key="j" style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 4px;"><a>{{ user.name }}</a></div>
 				<!-- <div style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"><a>{{ users }}</a></div> -->
 			</div>
 		</div>
@@ -83,10 +80,13 @@ export default {
 		},
 	},
 	created() {
+		var name = getRndStr();
+		console.log(name)
+		this.name = name;
 		this.roomid = this.$route.params.id
-		this.joinroom(this.roomid)
+		this.joinroom(name)
 		// this.socket.emit("sendposts", this.roomid, "始めました");
-		this.name = getRndStr();
+		
 	},
 	computed: {
 
@@ -136,12 +136,15 @@ export default {
 			this.socket.emit("sendposts", this.roomid, this.name, this.input, this.mycolor);
 			this.input = '';
 		},
-		joinroom() {
+		joinroom(name) {
 			this.socket.emit("roomcreate", this.roomid);
-			this.socket.emit("joinroom", this.roomid);
+			this.socket.emit("joinroom", this.roomid, name);
 		},
 		roomview() {
 			this.socket.emit("roomview");
+		},
+		namech() {
+			this.socket.emit("namech", this.roomid, this.name);
 		}
 	}
 }
