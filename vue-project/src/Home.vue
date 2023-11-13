@@ -1,9 +1,7 @@
 <template>
-	<div class="mlr-a" style="width: 1200px;">
+	<div class="mlr-a" style="min-width: 880px; max-width: 1160px;">
 
-		<div style="height: 624px;">
-		</div>
-		<div class="mlr-a" style="width: 254px; height: 64px; font-size: 24px;  margin-top: 12px; background-color: #eee; padding: 8px 24px; border-radius: 32px; text-align: center;">
+		<div class="mlr-a" style="width: 254px; height: 64px; font-size: 24px;  margin-top: 12px; background-color: #fff; padding: 8px 24px; border-radius: 32px; text-align: center;">
 			<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
 			<router-link :to="{name: 'room', params: {id: roomid}}" style="width: 124px; text-decoration: none; color: rgb(34, 34, 34);">to room</router-link>
 		</div>
