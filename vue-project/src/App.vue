@@ -1,5 +1,5 @@
 <template>
-	<div style="width: 840px; height: 460px;">
+	<div style="width: 880px; height: 460px; user-select: none; margin-top: 20px;">
 
 		<!-- まいんすいーぱーの箇所 コメントアウト -->
 
@@ -14,13 +14,14 @@
 		</div> -->
 
 		<!-- <div :class="drawf" id="main" style="position: absolute; top: 0; margin-top: 32px;"> -->
-		<div :class="drawf" id="main">
+		<div class="mlr-a" :class="drawf" id="main" style="width: 840px;">
 			<!-- <p style="user-select: none;">X: {{ mouseX }} Y: {{ mouseY }}</p> -->
 			<canvas style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px;"
 				ref="canvas" width="840" height="460"
 				v-on:mousemove="paint"
 				v-on:mousedown="dragStart"
 				v-on:mouseup="dragEnd"
+				v-on:mouseout="dragEnd"
 				>
 			</canvas>
 		</div>
@@ -28,15 +29,13 @@
 	</div>
 
 
-	<div class="mlr-a">
+	<div class="mlr-a" style="height: 120px;">
 
 		<div style="width: 320px; display: flex; margin-left: auto; margin-right: auto; margin-top: 12px;">
-			<button v-on:click="memomode = !memomode" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
+			<!-- <button v-on:click="memomode = !memomode" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12; user-select: none;">
 				メモする : {{ memomode }}
-			</button>
-			<button v-on:click="" style="width: 120px; margin-left: auto; margin-right: auto;" @click="clear">
-				クリア
-			</button>
+			</button> -->
+
 			<!-- マインスイーパ機能 -->
 			<!-- <button v-on:click="mine_dig_flag = !mine_dig_flag" style="width: 120px; margin-left: auto; margin-right: auto; z-index: 12;">
 				掘る : {{ mine_dig_flag }}
@@ -45,12 +44,14 @@
 
 		<div style="margin-top: 8px;">
 			<div style="width: 320px; display: flex; margin-left: auto; margin-right: auto;">
-				<div style="margin-left: auto; margin-right: auto;">
+				<div style="margin-left: auto; margin-right: auto; height:">
 					<button v-on:click="colorch('#df2a2a',0)" style="border: none; background-color: #df2a2a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#dfd32a',0)" style="border: none; background-color: #dfd32a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#2a3cdf',0)" style="border: none; background-color: #2a3cdf; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#252525',0)" style="border: none; background-color: #252525; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
-					<button v-on:click="colorch('#fff',1)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<button v-on:click="colorch('#fff',0)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
+					<!-- <button v-on:click="colorch('#fff',1)" style="border: 1px solid; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button> -->
+					<button v-on:click="clear" style="border: 1px dashed; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 				</div>
 			</div>
 			<div style="text-align: center; margin-top: 4px;"><input type="range" name="speed" min="1" max="36" v-model="linewid" style=""><label style="margin-left: 4px;">{{ linewid }}</label></div>
@@ -89,7 +90,7 @@ export default {
 			minesrow: [['','','',''],['','','',''],['','','',''],['','','','']],
 			minescnt: 4,
 			rowcnt: 4,
-			memomode: false,
+			memomode: true,
 			mouseX: 0,
     		mouseY: 0,
 			isDrag: false,
@@ -138,6 +139,8 @@ export default {
 		this.context.lineJoin = 'round';
 		this.context.lineWidth = 1;
 		this.context.strokeStyle = '#dfb52a';
+		this.context.fillStyle = 'rgb( 255, 255, 255)';
+		this.context.fillRect(0, 0, 840, 460);
 
 		this.socket.emit("initcanvas", this.roomid, this.drawimg);
 
@@ -278,6 +281,10 @@ export default {
 		},
 		// 描画終了（mouseup, mouseout）
 		dragEnd: function() {
+			if(!this.isDrag) {
+				return;
+			}
+
 			this.socket.emit("dragEnd", this.roomid);
 			this.isDrag = false;
 

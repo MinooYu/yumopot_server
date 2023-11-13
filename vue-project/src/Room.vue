@@ -1,10 +1,10 @@
 <template>
 	<!-- <div style="margin-left: auto; margin-right: auto;"><button :v-on:click="sendposts(sendmes)">send posts</button></div> -->
-	<div class="mlr-a" style="width: 1160px; display: flex; margin-top: 24px;">
-		<div style="width: 840px; height: 460px;">
+	<div class="mlr-a" style="min-width: 880px; max-width: 1260px; display: flex; flex-wrap: wrap; padding-top: 24px;">
+		<div class="mlr-a" style="width: 880px; height: 640px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6); margin-top: 12px;">
 			<App :roomid="$route.params.id" :socket="socket"></App>
 		</div>
-		<div style="width: 320px;">
+		<div class="mlr-a" style="width: 320px; margin-top: 12px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6);">
 			<div class="mlr-a" style="width: 320px;">
 				<div style="margin-top: 12px; width: 280px; margin-left: auto; margin-right: auto;">
 					<div>
@@ -28,22 +28,48 @@
 			<div><a style="color: red;">{{ message }}</a></div>
 
 
-			<div class="mlr-a" id="scroller" style="width: 320px; height: 232px; margin-top: 8px; overflow-y: scroll;">
-				<div v-for="(post, i) in posts" :key="i" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: left; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
+			<div class="mlr-a" id="scroller" style="width: 312px; height: 232px; margin-top: 8px; overflow-y: scroll; overflow-x: hidden;">
+				<div v-for="(post, i) in posts" :key="i" class="fadeLeft" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: left; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
 			</div>
-			<div class="mlr-a" style="width: 320px; margin-top: 8px;">
+			<div class="mlr-a" style="width: 312px; margin-top: 8px;">
 				<div style="width: 152px; margin-bottom: 8px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"> users:{{ users.length }}</div>
 			</div>
-			<div class="mlr-a" style="width: 320px; height: 124px; margin-top: 8px; overflow-y: scroll;">
-				<div v-for="(user, j) in users" :key="j" style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 4px;"><a>{{ user.name }}</a></div>
+			<div class="mlr-a" style="width: 312px; height: 124px; margin-top: 8px; margin-bottom: 8px; overflow-y: scroll; overflow-x: hidden;">
+				<div class="fadeLeft" v-for="(user, j) in users" :key="j" style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 4px;"><a>{{ user.name }}</a></div>
 				<!-- <div style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"><a>{{ users }}</a></div> -->
 			</div>
 		</div>
 	</div>
 
+	<div v-if="!notimodalflag" style="position: fixed; user-select: none; bottom: 24px; right: calc((100vw - 96vw) / 2); height: 52px; width: 52px; background-color: #fff; border-radius: 50%; text-align: center; display: flex; align-items: center; text-align: center; filter: drop-shadow(0 0 6px #c6c6c6);" v-on:click="notimodalflag = !notimodalflag;"><label style="width: 52px;">{{ notifydatalen }}</label></div>
+	<div v-else-if="notimodalflag" style="position: fixed; user-select: none; bottom: 24px; right: calc((100vw - 96vw) / 2); height: 52px; width: 52px; background-color: #fff; border-radius: 50%; text-align: center; display: flex; align-items: center; text-align: center; filter: drop-shadow(0 0 6px #c6c6c6);" v-on:click="notimodalflag = !notimodalflag; notifydatach()"><label style="width: 52px;">X</label></div>
+
+	<div class="mlr-a" v-if="notimodalflag && notifydatalen == 0" style="width: 280px; position: fixed; bottom: 88px; right: calc((100vw - 96vw) / 2); margin-top: 12px; padding-top: 4px; padding-bottom: 4px;">
+		<div class="mlr-a" style="width: 280px; height: 124px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding-top: 2px; padding-bottom: 2px; filter: drop-shadow(0 0 6px #c6c6c6); text-align: center; display: flex; align-items: center;"><label style="width: 280px; font-size: 24px;">Oops...</label></div>
+	</div>
+	<div class="mlr-a" v-else-if="notimodalflag && notifydatalen != 0" style="width: 280px; position: fixed; bottom: 88px; right: calc((100vw - 96vw) / 2); margin-top: 12px; padding-top: 4px; padding-bottom: 4px;">
+		<div class="mlr-a" style="width: 280px; min-height: 364px; max-height: 452px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding-top: 2px; padding-bottom: 2px; filter: drop-shadow(0 0 6px #c6c6c6);">
+			<div class="mlr-a" style="width: 272px; min-height: 364px; max-height: 432px; margin-top: 8px; margin-bottom: 8px; overflow-y: scroll; overflow-x: hidden; background-color: #fff; border-radius: 4px; padding: 6px 4px;">
+				<div class="mlr-a fadeLeft" v-for="(data, l) in notifydata" :key="l" style="background-color: #eee; border-radius: 4px; width: 242px; padding: 4px 12px; margin-top: 4px;" v-on:click="data.flag = true"> <a v-if="!data.flag"></a>{{ data }}</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
+let targets = document.querySelectorAll('.notify-cell-anim'); //ターゲット要素
+//スクロールイベント
+window.addEventListener('scroll', function () {
+	var scroll = window.scrollY; //スクロール量を取得
+	var windowHeight = window.innerHeight; //画面の高さを取得
+	for (let target of targets) { //ターゲット要素がある分、アニメーション用のクラスをつける処理を繰り返す
+		var targetPos = target.getBoundingClientRect().top + scroll; //ターゲット要素の位置を取得
+		if (scroll > targetPos - windowHeight) { //スクロール量 > ターゲット要素の位置
+			target.classList.add('fadeLeft'); //is-animatedクラスを加える
+		}
+	}
+});
+
 import io from "socket.io-client";
 import App from './App.vue'
 
@@ -63,6 +89,9 @@ export default {
 			name: '',
 			users: [],
 			mycolor: '#000000',
+			notifydata: [],
+			notifydatalen: 0,
+			notimodalflag: false,
 		}
 	),
 	watch: {
@@ -78,6 +107,9 @@ export default {
 				scroller.scrollTo(0, scroller.scrollHeight - scroller.clientHeight);
 			})
 		},
+		notifydata() {
+
+		}
 	},
 	created() {
 		var name = getRndStr();
@@ -125,6 +157,14 @@ export default {
 			this.message = message;
 		});
 
+		this.socket.on("notify", (data) => {
+			this.notifydatalen = 0;
+			this.notifydata.push(data)
+			this.notifydata.forEach(element => {
+				if(!element.readflag) this.notifydatalen ++;
+			});
+		});
+
 		this.socket.emit("viewposts", this.roomid);
 		this.socket.emit("roominuser", this.roomid);
 	},
@@ -144,7 +184,22 @@ export default {
 			this.socket.emit("roomview");
 		},
 		namech() {
+			const userIndex = this.users.findIndex((u) => u.id == this.socket.id);
+			if(userIndex == -1) this.message = "見つかりません"
+			if(this.users[userIndex].name == this.name) return
+
 			this.socket.emit("namech", this.roomid, this.name);
+		},
+		notifydatach() {
+			var i = 0;
+			console.log("datach")
+			this.notifydata.forEach(element => {
+				if(element.flag == true) {
+					this.notifydata.splice(i, 1);
+				}
+				i++;
+			});
+			this.notifydatalen = this.notifydata.length
 		}
 	}
 }
@@ -192,5 +247,35 @@ function getRndStr(){
 }
 .back-r {
 	background-color: #df2a2a;
+}
+
+::-webkit-scrollbar{
+   width: 6px;
+}
+::-webkit-scrollbar-track{
+   /* background-color: #fff; */
+}
+::-webkit-scrollbar-thumb{
+	border-radius: 3px;
+	background-color: #c5c5c7;
+}
+
+.fadeLeft{
+	animation-name:fadeLeftAnime;
+	animation-duration:0.4s;
+	animation-fill-mode:forwards;
+	opacity:0;
+}
+
+@keyframes fadeLeftAnime{
+	from {
+		opacity: 0;
+		transform: translateX(24px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }
 </style>

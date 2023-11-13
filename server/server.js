@@ -79,41 +79,41 @@ io.on("connection", async (socket) => {
 		io.to(roomid).emit("clear");
 	});
 
-	socket.on("disconnect", () => {
-		const user = users.find((u) => u.id == socket.id);
-		if(!user) {
-			return;
-		}
+	// socket.on("disconnect", () => {
+	// 	const user = users.find((u) => u.id == socket.id);
+	// 	if(!user) {
+	// 		return;
+	// 	}
 
-		const roomIndex = rooms.findIndex((r) => r.id == user.roomId);
-		const room = rooms[roomIndex];
-		const userIndex = room.users.findIndex((u) => u.id == socket.id);
+	// 	const roomIndex = rooms.findIndex((r) => r.id == user.roomId);
+	// 	const room = rooms[roomIndex];
+	// 	const userIndex = room.users.findIndex((u) => u.id == socket.id);
 
-		// if(userIndex == room.turnUserIndex) {
-		// 	rooms[roomIndex].turnUserIndex = getNextTurnUserIndex(room);
-		// }
+	// 	// if(userIndex == room.turnUserIndex) {
+	// 	// 	rooms[roomIndex].turnUserIndex = getNextTurnUserIndex(room);
+	// 	// }
 
-		rooms[roomIndex].users.splice(userIndex, 1);
-		users.splice(
-			users.findIndex((u) => u.ic == socket.id),
-			1
-		);
+	// 	rooms[roomIndex].users.splice(userIndex, 1);
+	// 	users.splice(
+	// 		users.findIndex((u) => u.ic == socket.id),
+	// 		1
+	// 	);
 		
-		// if (room.turnUserIndex > userIndex) {
-		// 	rooms[roomIndex].turnUserIndex--;
-		// }
+	// 	// if (room.turnUserIndex > userIndex) {
+	// 	// 	rooms[roomIndex].turnUserIndex--;
+	// 	// }
 
-		// io.in(room.id).emit(
-		// 	"notifyDisconnection",
-		// 	user.name,
-		// 	room.usres[rooms[roomIndex].turnUserIndex].name
-		// );
-		io.in(room.id).emit(
-			"notifyDisconnection",
-			user.name,
-			// room.usres[rooms[roomIndex].turnUserIndex].name
-		);
-	});
+	// 	// io.in(room.id).emit(
+	// 	// 	"notifyDisconnection",
+	// 	// 	user.name,
+	// 	// 	room.usres[rooms[roomIndex].turnUserIndex].name
+	// 	// );
+	// 	io.in(room.id).emit(
+	// 		"notifyDisconnection",
+	// 		user.name,
+	// 		// room.usres[rooms[roomIndex].turnUserIndex].name
+	// 	);
+	// });
 
 
 	socket.on("roomcreate", async (roomid) => {
@@ -132,6 +132,8 @@ io.on("connection", async (socket) => {
 		console.log(name)
 		room.users.push(user)
 		socket.join(roomid);
+
+		notify(roomid, name + "部屋に参加しました")
 	});
 
 	socket.on("namech", async (roomid, name) => {
@@ -151,7 +153,8 @@ io.on("connection", async (socket) => {
 			io.to(rooms[roomIndex].id).emit("roominuser", rooms[roomIndex].users);
 			console.log(rooms[roomIndex].users)
 		 }
-		
+
+		 notify(roomid, "名前を変更")
 	});
 
 	
@@ -179,7 +182,14 @@ io.on("connection", async (socket) => {
 
 			console.log(postdata); rooms[roomIndex].posts.push(postdata);
 			io.to(rooms[roomIndex].id).emit("viewpost", postdata);
+
+			notify(roomid, "メッセージを取得")
 		}
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 });
+
+function notify(roomid, data) {
+	var notidata = {data: data, flag: false}
+	io.to(roomid).emit("notify", notidata);
+}
