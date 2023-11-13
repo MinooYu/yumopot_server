@@ -16,8 +16,17 @@
 		<!-- <div :class="drawf" id="main" style="position: absolute; top: 0; margin-top: 32px;"> -->
 		<div class="mlr-a" :class="drawf" id="main" style="width: 840px;">
 			<!-- <p style="user-select: none;">X: {{ mouseX }} Y: {{ mouseY }}</p> -->
-			<canvas style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px;"
-				ref="canvas" width="840" height="460"
+			<!-- position: absolute; -->
+			<canvas class="canvaslayer" style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px;  position: absolute;"
+				ref="canvas1" width="840" height="460"
+				v-on:mousemove="paint"
+				v-on:mousedown="dragStart"
+				v-on:mouseup="dragEnd"
+				v-on:mouseout="dragEnd"
+				>
+			</canvas>
+			<canvas class="canvaslayer draw-f" style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px; position: absolute;"
+				ref="canvas2" width="840" height="460"
 				v-on:mousemove="paint"
 				v-on:mousedown="dragStart"
 				v-on:mouseup="dragEnd"
@@ -67,6 +76,8 @@
 		<!-- <div class="mlr-a"><div style="text-align: center;"><img :src="drawimg"></div></div> -->
 	</div>
 
+	<div>{{ layercnt }}</div>
+
 	<!-- <DrawTool /> -->
 
 </template>
@@ -103,6 +114,7 @@ export default {
 			nowpath: null, 
 			drawimg: null,
 			colornum: "#fff",
+			layercnt: 0,
 		}
 	),
 	created() {
@@ -132,7 +144,13 @@ export default {
 	},
 	mounted() {
 
-		this.canvas = this.$refs.canvas;
+		this.canvas = this.$refs.canvas2;
+		// console.log(this.canvas)
+		
+		console.log(this.canvas)
+		let targets = document.getElementsByClassName('canvaslayer');
+		console.log(targets)
+		this.layercnt = targets.length
 
     	this.context = this.canvas.getContext("2d");
 		this.context.lineCap = 'round';

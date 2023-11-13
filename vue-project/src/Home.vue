@@ -1,23 +1,32 @@
 <template>
-	<div class="mlr-a" style="min-width: 880px; max-width: 1160px;">
+	<div class="mlr-a" style="margin-top: 12px; max-width: 900px; max-width: 1160px; max-height: 680px; display: flex; flex-wrap: wrap; padding: 6px 4px; overflow-y: scroll; overflow-x: hidden;">
+		<div v-for="(data, i) in rooms" :key="i" class="fadeitem" style=" width: 217px; height: 160px; margin-bottom: 12px; margin-left: 6px; margin-right: 6px; background-color: #fff; border-radius: 8px;">
+			<p style="text-align: center; display: flex; align-items: center; height: 160px; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;"><label style="width: 217px;">{{ data.id }}</label></p>
+		</div>
+	</div>
+	<div class="mlr-a" style="min-width: 880px; max-width: 1160px; margin-top: 32px;">
 
-		<div class="mlr-a" style="width: 254px; height: 64px; font-size: 24px;  margin-top: 12px; background-color: #fff; padding: 8px 24px; border-radius: 32px; text-align: center;">
+		<div class="mlr-a" style="width: 254px; height: 64px; font-size: 24px;  margin-top: 12px; background-color: #fff; border-radius: 32px; text-align: center;">
 			<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
-			<router-link :to="{name: 'room', params: {id: roomid}}" style="width: 124px; text-decoration: none; color: rgb(34, 34, 34);">to room</router-link>
+			<router-link :to="{name: 'room', params: {id: roomid}}" style="text-decoration: none; color: rgb(34, 34, 34);"><div style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px;">to room</div></router-link>
 		</div>
 
-		<!-- <div class="mlr-a" style="width: 124px; margin-top: 12px; ">
+		<div class="mlr-a" style="width: 124px; margin-top: 12px; ">
 			<button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee; border: 1px solid #222;" v-on:click="roomview">rooms view</button>
-		</div> -->
-
-		<!-- <div style="margin-top: 12px;">
-			<p v-for="(data, i) in rooms" :key="i" style="text-align: center;"> {{ data }}</p>
-		</div> -->
+		</div>
 
 	</div>
 </template>
 
 <script>
+// $(function(){
+// 	$('.fadein').each(function(i){
+// 		$(this).delay(i * 200).queue(function(){
+// 			$(this).addClass('active');
+// 		});
+// 	});
+// });
+
 import io from "socket.io-client";
 
 export default {
@@ -40,6 +49,29 @@ export default {
 	computed: {
 
 	},
+	watch: {
+		rooms(newval, oldval) {
+			this.$nextTick(() => {
+				let targets = document.getElementsByClassName('fadeitem');
+				console.log(targets);
+
+				// targets.forEach((element, index) => {
+				// 	setTimeout(function() {
+				// 		element.classList.add("fadeUp")
+				// 	}, index * 2000);
+				// });
+
+				Array.prototype.forEach.call(targets, function (element, index) {
+					setTimeout(function() {
+						element.classList.add("fadeUp")
+					}, index * 32);
+				});
+			})
+		},
+		notifydata() {
+
+		}
+	},
 	mounted() {
 		this.socket.on("hello", (str, cnt) => {
 			console.log(str);
@@ -59,6 +91,7 @@ export default {
 			this.socket.emit("joinroom", this.roomid);
 		},
 		roomview() {
+			this.rooms = [];
 			this.socket.emit("roomview");
 		}
 	}
@@ -109,4 +142,38 @@ function getRndStr(){
 .back-r {
 	background-color: #df2a2a;
 }
+::-webkit-scrollbar{
+   width: 6px;
+}
+::-webkit-scrollbar-track{
+   /* background-color: #fff; */
+}
+::-webkit-scrollbar-thumb{
+	border-radius: 3px;
+	background-color: #c5c5c7;
+}
+
+.fadeitem {
+	opacity:0;
+}
+
+.fadeUp{
+	animation-name:fadeLeftAnime;
+	animation-duration:0.4s;
+	animation-fill-mode:forwards;
+	opacity:0;
+}
+
+@keyframes fadeLeftAnime{
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
 </style>

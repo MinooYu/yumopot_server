@@ -28,7 +28,7 @@
 			<div><a style="color: red;">{{ message }}</a></div>
 
 
-			<div class="mlr-a" id="scroller" style="width: 312px; height: 232px; margin-top: 8px; overflow-y: scroll; overflow-x: hidden;">
+			<div class="mlr-a" id="scroller" style="width: 312px; height: 332px; margin-top: 8px; overflow-y: scroll; overflow-x: hidden;">
 				<div v-for="(post, i) in posts" :key="i" class="fadeLeft" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: left; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
 			</div>
 			<div class="mlr-a" style="width: 312px; margin-top: 8px;">
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+
 let targets = document.querySelectorAll('.notify-cell-anim'); //ターゲット要素
 //スクロールイベント
 window.addEventListener('scroll', function () {
@@ -193,12 +194,17 @@ export default {
 		notifydatach() {
 			var i = 0;
 			console.log("datach")
-			this.notifydata.forEach(element => {
+
+			this.notifydata.forEach((element, index) => {
+				var flag = false
 				if(element.flag == true) {
 					this.notifydata.splice(i, 1);
+					flag = true
 				}
-				i++;
+
+				if(!flag) i++;
 			});
+
 			this.notifydatalen = this.notifydata.length
 		}
 	}
