@@ -1,7 +1,7 @@
 <template>
 	<div class="mlr-a" style="margin-top: 12px; max-width: 900px; max-width: 1160px; max-height: 680px; display: flex; flex-wrap: wrap; padding: 6px 4px; overflow-y: scroll; overflow-x: hidden;">
-		<div v-for="(data, i) in rooms" :key="i" class="fadeitem" style=" width: 217px; height: 160px; margin-bottom: 12px; margin-left: 6px; margin-right: 6px; background-color: #fff; border-radius: 8px;">
-			<p style="text-align: center; display: flex; align-items: center; height: 160px; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;"><label style="width: 217px;">{{ data.id }}</label></p>
+		<div v-for="(data, i) in rooms" :key="i" v-on:click="roomid = data.id" class="fadeitem" style=" width: 217px; height: 120px; margin-bottom: 32px; margin-left: 6px; margin-right: 6px; background-color: #fff; border-radius: 8px; cursor: pointer;">
+			<p style="text-align: center; display: flex; align-items: center; height: 120px; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;"><a style="width: 217px;">{{ data.id }}</a></p>
 		</div>
 	</div>
 	<div class="mlr-a" style="min-width: 880px; max-width: 1160px; margin-top: 32px;">

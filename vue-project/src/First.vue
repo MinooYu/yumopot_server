@@ -4,7 +4,7 @@
 			<div style="width: 33%; display: flex;">
 				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
-			<div style="width: 34%; display: flex;">
+			<div style="width: 34%; display: flex; padding-top: 6px;">
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>

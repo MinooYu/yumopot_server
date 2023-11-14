@@ -30,6 +30,19 @@ const io = require("socket.io")(server, {
 	},
 });
 
+async function initroomdata() {
+	var  initroomidkeys = await redis_data_get_allkey(0);
+	var initroomidkeyvals = await redis_data_getter_key_val_map(0, initroomidkeys)
+	console.log(initroomidkeyvals)
+
+	initroomidkeys.forEach((element, index) => {
+		const initroom = {id: element, users: [], posts: []}
+		rooms.push(initroom);
+	});
+}
+
+initroomdata();
+
 io.on("connection", async (socket) => {
 	connectedcnt ++;
 
@@ -75,7 +88,7 @@ io.on("connection", async (socket) => {
 	socket.on("widthch", async (roomid, linewidth) => {
 		io.to(roomid).emit("widthch", linewidth);
 	});
-	
+
 	socket.on("clear", async (roomid) => {
 		io.to(roomid).emit("clear");
 	});
@@ -99,7 +112,7 @@ io.on("connection", async (socket) => {
 	// 		users.findIndex((u) => u.ic == socket.id),
 	// 		1
 	// 	);
-		
+
 	// 	// if (room.turnUserIndex > userIndex) {
 	// 	// 	rooms[roomIndex].turnUserIndex--;
 	// 	// }
@@ -121,7 +134,11 @@ io.on("connection", async (socket) => {
 		const room = {id: roomid, users: [], posts: []}
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		if(roomIndex != -1) { return }
-		else { rooms.push(room); }
+		else {
+			rooms.push(room);
+			// key : roomid , val : roomname
+			redis_data_setter(0, roomid, "test")
+		}
 	});
 
 	socket.on("joinroom", async (roomid, name) => {
@@ -150,7 +167,7 @@ io.on("connection", async (socket) => {
 
 		const userIndex = rooms[roomIndex].users.findIndex((u) => u.id == socket.id);
 		if (userIndex != -1) {
-			rooms[roomIndex].users[userIndex].name = name
+			rooms[roomIndex].users[userIndex].name = name;
 			io.to(rooms[roomIndex].id).emit("roominuser", rooms[roomIndex].users);
 			console.log(rooms[roomIndex].users)
 		 }
@@ -166,7 +183,12 @@ io.on("connection", async (socket) => {
 	
 	socket.on("roominuser", async (roomid) => {
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
-		if(roomIndex != -1) { io.to(rooms[roomIndex].id).emit("roominuser", rooms[roomIndex].users); console.log(rooms[roomIndex].users)}
+		if(roomIndex != -1) {
+			io.to(rooms[roomIndex].id).emit("roominuser", rooms[roomIndex].users);
+			console.log(rooms[roomIndex].users);
+			var keys = await redis_data_get_allkey(0);
+			console.log(keys)
+		}
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 
@@ -195,19 +217,23 @@ function notify(roomid, data) {
 	io.to(roomid).emit("notify", notidata);
 }
 
-async function redis_connection()
+
+
+
+async function redis_connection(dbnum)
 {
-	console.log("--- redis connect ---");
+	// console.log("--- redis connect ---");
 	const client = redis.createClient();
 	await client.connect();
+	client.select(dbnum)
 	return client;
 }
 
 async function redis_disconnection(client)
 {
 	await client.disconnect();
-	console.error("--- redis disconnect ---");
-	console.log();
+	// console.error("--- redis disconnect ---");
+	// console.log();
 }
 
 async function redis_get_values(client, key)
@@ -223,41 +249,42 @@ async function redis_set_values(client ,key, val)
 }
 
 
-async function redis_data_get_allkey()
+async function redis_data_get_allkey(dbnum)
 {
-	var client = await redis_connection();
+	var client = await redis_connection(dbnum);
 
 	const keys = await client.keys('*');
-	console.log("keys.length = " + keys.length);
+	// console.log("keys.length = " + keys.length);
 
 	await redis_disconnection(client);
 
 	return keys;
 }
 
-async function redis_data_setter(key, val)
+async function redis_data_getter(dbnum, keys)
 {
-	var client = await redis_connection();
+	var client = await redis_connection(dbnum);
+	var temp = [];
+	for(let key of keys) temp.push(await redis_get_values(client, key));
+	const val = (await Promise.all(temp))
+
+	await redis_disconnection(client);
+	return val;
+}
+
+async function redis_data_setter(dbnum, key, val)
+{
+	var client = await redis_connection(dbnum);
 
 	await redis_set_values(client, key, val);
 
 	await redis_disconnection(client);
 }
 
-async function redis_data_getter(keys)
-{
-	await redis_connection();
-	var temp = [];
-	for(let key of keys) temp.push(await redis_get_values(client, key));
-	const val = (await Promise.all(temp))
 
-	await redis_disconnection(client);
-	return vals;
-}
-
-async function redis_data_getter_key_val_map(keys)
+async function redis_data_getter_key_val_map(dbnum, keys)
 {
-	var client = await redis_connection();
+	var client = await redis_connection(dbnum);
 	const key_val_map = new Map();
 
 	for(let key of keys)
