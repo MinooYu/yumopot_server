@@ -5,6 +5,7 @@ const http = require("http");
 const { log } = require("console");
 const { Socket } = require("net");
 const app = express();
+const redis = require('redis');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -192,4 +193,80 @@ io.on("connection", async (socket) => {
 function notify(roomid, data) {
 	var notidata = {data: data, flag: false}
 	io.to(roomid).emit("notify", notidata);
+}
+
+async function redis_connection()
+{
+	console.log("--- redis connect ---");
+	const client = redis.createClient();
+	await client.connect();
+	return client;
+}
+
+async function redis_disconnection(client)
+{
+	await client.disconnect();
+	console.error("--- redis disconnect ---");
+	console.log();
+}
+
+async function redis_get_values(client, key)
+{
+	var val = await client.get(key);
+	return val;
+}
+
+async function redis_set_values(client ,key, val)
+{
+	await client.set(key, val);
+	console.log("set key : " + key + " / val : " + val);
+}
+
+
+async function redis_data_get_allkey()
+{
+	var client = await redis_connection();
+
+	const keys = await client.keys('*');
+	console.log("keys.length = " + keys.length);
+
+	await redis_disconnection(client);
+
+	return keys;
+}
+
+async function redis_data_setter(key, val)
+{
+	var client = await redis_connection();
+
+	await redis_set_values(client, key, val);
+
+	await redis_disconnection(client);
+}
+
+async function redis_data_getter(keys)
+{
+	await redis_connection();
+	var temp = [];
+	for(let key of keys) temp.push(await redis_get_values(client, key));
+	const val = (await Promise.all(temp))
+
+	await redis_disconnection(client);
+	return vals;
+}
+
+async function redis_data_getter_key_val_map(keys)
+{
+	var client = await redis_connection();
+	const key_val_map = new Map();
+
+	for(let key of keys)
+	{
+		var val = await redis_get_values(client, key);
+		key_val_map.set(key ,val);
+	}
+
+	await redis_disconnection(client);
+
+	return key_val_map;
 }
