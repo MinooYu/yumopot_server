@@ -48,9 +48,9 @@
 		<div class="mlr-a" style="width: 280px; height: 124px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding-top: 2px; padding-bottom: 2px; filter: drop-shadow(0 0 6px #c6c6c6); text-align: center; display: flex; align-items: center;"><label style="width: 280px; font-size: 24px;">Oops...</label></div>
 	</div>
 	<div class="mlr-a" v-else-if="notimodalflag && notifydatalen != 0" style="width: 280px; position: fixed; bottom: 88px; right: calc((100vw - 96vw) / 2); margin-top: 12px; padding-top: 4px; padding-bottom: 4px;">
-		<div class="mlr-a" style="width: 280px; min-height: 364px; max-height: 452px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding-top: 2px; padding-bottom: 2px; filter: drop-shadow(0 0 6px #c6c6c6);">
-			<div class="mlr-a" style="width: 272px; min-height: 364px; max-height: 432px; margin-top: 8px; margin-bottom: 8px; overflow-y: scroll; overflow-x: hidden; background-color: #fff; border-radius: 4px; padding: 6px 4px;">
-				<div class="mlr-a fadeLeft" v-for="(data, l) in notifydata" :key="l" style="background-color: #eee; border-radius: 4px; width: 242px; padding: 4px 12px; margin-top: 4px;" v-on:click="data.flag = true"> <a v-if="!data.flag"></a>{{ data }}</div>
+		<div class="mlr-a" style="width: 280px; min-height: 384px; max-height: 384px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding-top: 2px; padding-bottom: 2px; filter: drop-shadow(0 0 6px #c6c6c6);">
+			<div class="mlr-a" style="width: 272px; min-height: 364px; max-height: 364px; margin-top: 8px; margin-bottom: 8px; overflow-y: scroll; overflow-x: hidden; background-color: #fff; border-radius: 4px; padding: 0 4px;">
+				<div class="mlr-a fadeLeft notifyitems" v-for="(data, l) in notifydata" :key="l" v-on:click="data.flag = true" v-bind:class="{ 'notifyitems-anim': data.flag }" style="display: flex; user-select: none;"><a style="background-color: #eee; border-radius: 4px; width: 258px; padding: 4px 12px; margin-top: 4px;">{{ data.data }}</a></div>
 			</div>
 		</div>
 	</div>
@@ -192,18 +192,14 @@ export default {
 			this.socket.emit("namech", this.roomid, this.name);
 		},
 		notifydatach() {
-			var i = 0;
+			// var i = 0;
 			console.log("datach")
-
-			this.notifydata.forEach((element, index) => {
-				var flag = false
-				if(element.flag == true) {
+			for(var i = 0; i<this.notifydata.length; i++) {
+				if(this.notifydata[i].flag == true) {
 					this.notifydata.splice(i, 1);
-					flag = true
+					i--;
 				}
-
-				if(!flag) i++;
-			});
+			}
 
 			this.notifydatalen = this.notifydata.length
 		}
@@ -258,9 +254,9 @@ function getRndStr(){
 ::-webkit-scrollbar{
    width: 6px;
 }
-::-webkit-scrollbar-track{
-   /* background-color: #fff; */
-}
+/* ::-webkit-scrollbar-track{
+   background-color: #fff;
+} */
 ::-webkit-scrollbar-thumb{
 	border-radius: 3px;
 	background-color: #c5c5c7;
@@ -282,6 +278,26 @@ function getRndStr(){
 	to {
 		opacity: 1;
 		transform: translateX(0);
+	}
+}
+
+.notifyitems-anim {
+	animation-name:fadeNotifyItemAnim;
+	animation-duration:0.2s;
+	animation-fill-mode:forwards;
+	opacity:0;
+}
+
+@keyframes fadeNotifyItemAnim {
+	from {
+		opacity: 1;
+		transform: translateX(0px);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateX(-8px);
+		display: none;
 	}
 }
 </style>

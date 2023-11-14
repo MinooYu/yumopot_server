@@ -25,14 +25,6 @@
 				v-on:mouseout="dragEnd"
 				>
 			</canvas>
-			<canvas class="canvaslayer draw-f" style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px; position: absolute;"
-				ref="canvas2" width="840" height="460"
-				v-on:mousemove="paint"
-				v-on:mousedown="dragStart"
-				v-on:mouseup="dragEnd"
-				v-on:mouseout="dragEnd"
-				>
-			</canvas>
 		</div>
 
 	</div>
@@ -75,9 +67,6 @@
 		<!-- <div class="mlr-a"><div style="text-align: center;"> {{ drawimg }} </div></div> -->
 		<!-- <div class="mlr-a"><div style="text-align: center;"><img :src="drawimg"></div></div> -->
 	</div>
-
-	<div>{{ layercnt }}</div>
-
 	<!-- <DrawTool /> -->
 
 </template>
@@ -144,13 +133,12 @@ export default {
 	},
 	mounted() {
 
-		this.canvas = this.$refs.canvas2;
+		this.canvas = this.$refs.canvas1;
 		// console.log(this.canvas)
 		
 		console.log(this.canvas)
 		let targets = document.getElementsByClassName('canvaslayer');
 		console.log(targets)
-		this.layercnt = targets.length
 
     	this.context = this.canvas.getContext("2d");
 		this.context.lineCap = 'round';
