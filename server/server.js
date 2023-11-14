@@ -21,8 +21,8 @@ var users = [];
 var Canvas = [];
 var connectedcnt = 0
 const rooms = [];
-const minesroom = {id: "mineswiper_room", users: [], posts: []}
-rooms.push(minesroom);
+// const minesroom = {id: "mineswiper_room",name: "mineswiper_room", users: [], posts: []}
+// rooms.push(minesroom);
 
 const io = require("socket.io")(server, {
 	cors: {
@@ -33,10 +33,10 @@ const io = require("socket.io")(server, {
 async function initroomdata() {
 	var  initroomidkeys = await redis_data_get_allkey(0);
 	var initroomidkeyvals = await redis_data_getter_key_val_map(0, initroomidkeys)
-	console.log(initroomidkeyvals)
+	log(initroomidkeyvals)
 
 	initroomidkeys.forEach((element, index) => {
-		const initroom = {id: element, users: [], posts: []}
+		const initroom = {id: element, name: initroomidkeyvals.get(element), users: [], posts: []}
 		rooms.push(initroom);
 	});
 }
@@ -178,6 +178,8 @@ io.on("connection", async (socket) => {
 	
 
 	socket.on("roomview", async () => {
+		log("roomview")
+		log(rooms)
 		io.to(socket.id).emit("roomview", rooms);
 	});
 	

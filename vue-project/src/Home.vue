@@ -1,17 +1,26 @@
 <template>
 	<div class="mlr-a" style="margin-top: 12px; max-width: 900px; max-width: 1160px; max-height: 680px; display: flex; flex-wrap: wrap; padding: 6px 4px; overflow-y: scroll; overflow-x: hidden;">
-		<div v-for="(data, i) in rooms" :key="i" v-on:click="roomid = data.id" class="fadeitem" style=" width: 217px; height: 120px; margin-bottom: 32px; margin-left: 6px; margin-right: 6px; background-color: #fff; border-radius: 8px; cursor: pointer;">
-			<p style="text-align: center; display: flex; align-items: center; height: 120px; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;"><a style="width: 217px;">{{ data.id }}</a></p>
+		<div v-for="(data, i) in rooms" :key="i" class="fadeitem" style=" width: 217px; height: 120px; margin-bottom: 32px; margin-left: 6px; margin-right: 6px;">
+			<div class="roomscell" style="text-align: center; user-select: none; display: flex; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;">
+				<input type="radio" name="roomscell" :id="i" style="position: absolute; display: none;"><label :for="i" style="width: 217px; height: 120px; border-radius: 8px; padding-top: 44px; cursor: pointer;" v-on:click="roomid = data.id">{{ data.id }} : {{ data.name }}</label>
+			</div>
 		</div>
 	</div>
 	<div class="mlr-a" style="min-width: 880px; max-width: 1160px; margin-top: 32px;">
 
-		<div class="mlr-a" style="width: 254px; height: 64px; font-size: 24px;  margin-top: 12px; background-color: #fff; border-radius: 32px; text-align: center;">
-			<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
-			<router-link :to="{name: 'room', params: {id: roomid}}" style="text-decoration: none; color: rgb(34, 34, 34);"><div style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px;">to room</div></router-link>
+		<div class="mlr-a" style="width: 640px; display: flex;">
+			<div v-if="roomid" class="mlr-a fadeUp12" style="width: 254px; font-size: 24px;  margin-top: 12px; background-color: #fff; border-radius: 32px; text-align: center;">
+				<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
+				<router-link :to="{name: 'room', params: {id: roomid}}" style="text-decoration: none; color: rgb(34, 34, 34);"><div style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px;">to room</div></router-link>
+			</div>
+
+			<div class="mlr-a fadeUp12" style="width: 254px; font-size: 24px;  margin-top: 12px; background-color: #fff; border-radius: 32px; text-align: center;">
+				<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
+				<router-link :to="{name: 'room', params: {id: randomcreateroomid}}" style="text-decoration: none; color: rgb(34, 34, 34);"><div style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px;">create room</div></router-link>
+			</div>
 		</div>
 
-		<div class="mlr-a" style="width: 124px; margin-top: 12px; ">
+		<div class="mlr-a fadeUp12" style="width: 124px; margin-top: 12px; ">
 			<button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee; border: 1px solid #222;" v-on:click="roomview">rooms view</button>
 		</div>
 
@@ -19,13 +28,6 @@
 </template>
 
 <script>
-// $(function(){
-// 	$('.fadein').each(function(i){
-// 		$(this).delay(i * 200).queue(function(){
-// 			$(this).addClass('active');
-// 		});
-// 	});
-// });
 
 import io from "socket.io-client";
 
@@ -37,10 +39,12 @@ export default {
 			rooms: [],
 			roomid: '',
 			socket: io("http://localhost:3031"),
+			randomcreateroomid: '',
 		}
 	),
 	created() {
-		this.genid();
+		// this.genid();
+		this.randomcreateroomid = getRndStr()
 		this.socket.on("connect", () => {
 			console.log("connected");
 			this.socket.emit("helloroom");
@@ -91,6 +95,7 @@ export default {
 			this.socket.emit("joinroom", this.roomid);
 		},
 		roomview() {
+			this.roomid = '';
 			this.rooms = [];
 			this.socket.emit("roomview");
 		}
@@ -145,12 +150,35 @@ function getRndStr(){
 ::-webkit-scrollbar{
    width: 6px;
 }
-::-webkit-scrollbar-track{
-   /* background-color: #fff; */
-}
+/* ::-webkit-scrollbar-track{
+   background-color: #fff;
+} */
 ::-webkit-scrollbar-thumb{
 	border-radius: 3px;
 	background-color: #c5c5c7;
+}
+
+.roomscell label {
+	background-color: #f5f5f5;
+}
+.roomscell input:checked+label{
+    background: #fff;
+    color: #c7d406;
+	animation-name:itemclick;
+	animation-duration:0.4s;
+	animation-fill-mode:forwards;
+}
+
+@keyframes itemclick{
+	from {
+		opacity: 1;
+		transform: translateY(-4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .fadeitem {
@@ -158,13 +186,13 @@ function getRndStr(){
 }
 
 .fadeUp{
-	animation-name:fadeLeftAnime;
+	animation-name:fadeupAnime;
 	animation-duration:0.4s;
 	animation-fill-mode:forwards;
 	opacity:0;
 }
 
-@keyframes fadeLeftAnime{
+@keyframes fadeupAnime{
 	from {
 		opacity: 0;
 		transform: translateY(24px);
@@ -172,7 +200,27 @@ function getRndStr(){
 
 	to {
 		opacity: 1;
-		transform: translateX(0);
+		transform: translateY(0);
+	}
+}
+
+
+.fadeUp12{
+	animation-name:fadeup12Anime;
+	animation-duration:0.4s;
+	animation-fill-mode:forwards;
+	opacity:0;
+}
+
+@keyframes fadeup12Anime{
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
 	}
 }
 
