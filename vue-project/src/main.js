@@ -7,7 +7,7 @@ import Home from './Home.vue'
 import First from './First.vue'
 import Room from './Room.vue'
 import Linkhead from './linkhead.vue'
-import Scrolltest from './Scrolltest.vue'
+import Scrolltest from './ScrollTest.vue'
 
 
 
