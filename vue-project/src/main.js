@@ -7,6 +7,8 @@ import Home from './Home.vue'
 import First from './First.vue'
 import Room from './Room.vue'
 import Linkhead from './linkhead.vue'
+import Scrolltest from './ScrollTest.vue'
+
 
 
 const routes = [
@@ -14,6 +16,7 @@ const routes = [
 	{ path: '/App', name: 'app', component: App },
 	{ path: '/Home', name: 'home', component: Home },
 	{ path: '/Link', name: 'linkhead', component: Linkhead },
+	{ path: '/Scroll', name: 'scrolltest', component: Scrolltest },
 	{ path: '/Room/:id', name: 'room', component: Room, props: route => ({id: route.params.id}),},
 	
 ]

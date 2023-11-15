@@ -6,7 +6,7 @@
 			</div>
 			<div style="width: 34%; display: flex; padding-top: 6px;">
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
-				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
+				<router-link :to="{name: 'scrolltest'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To test</router-link>
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
 			</div>
