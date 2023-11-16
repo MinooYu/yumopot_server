@@ -13,9 +13,19 @@
 	</section>
 
 	<section class="sec-4">
-		<h1 class="animate">Very Good</h1>
-		<p class="animate">Animation on Scroll using HTML CSS and Javascrit</p>
+		<h1>Very Good<span class="showRight-animate"></span></h1>
+		<p>Animation on Scroll using HTML CSS and Javascrit<span class="showRight-animate"></span></p>
 	</section>
+
+	<section class="sec-5">
+		<h1 class="animate">sec5</h1>
+		<div class="images">
+			<div class="animate imgcell" style="width: 400px; height: 120px; --i:0"><div style="width:360px; height: 200px; background-color: #fff; color: #fff; border-radius: 4px;">a</div></div>
+			<div class="animate imgcell" style="width: 400px; height: 120px; --i:1"><div style="width:360px; height: 200px; background-color: #fff; color: #fff; border-radius: 4px;">a</div></div>
+			<div class="animate imgcell" style="width: 400px; height: 120px; --i:2"><div style="width:360px; height: 200px; background-color: #fff; color: #fff; border-radius: 4px;">a</div></div>
+		</div>
+	</section>
+	<section></section>
 </template>
 
 <script>
@@ -43,7 +53,8 @@ export default {
 		window.onscroll = () => {
 			sections.forEach(sec => {
 				let top = window.scrollY;
-				let offset = sec.offsetTop - 150;
+				// let offset = sec.offsetTop - 150;
+				let offset = sec.offsetTop - 250;
 				let height = sec.offsetHeight;
 
 				if (top >= offset && top < offset + height) {
@@ -66,18 +77,20 @@ section {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-	min-height: 100vh;
+	min-height: 50vh;
 	background: rgb(180, 180, 169); 
 	overflow-x: hidden;
 }
 
 h1 {
+	position: relative;
 	font-size: 90px;
 	color: #e9e9de;
 	font-weight: 800;
 }
 
 p {
+	position: relative;
 	font-size: 35px;
 	font-weight: 400;
 }
@@ -117,11 +130,39 @@ section.show-animate .animate {
 }
 
 .sec-3 .animate {
-	transform: scale(.7);
+	transform: scale(.4);
 }
 
 .sec-3.show-animate .animate {
 	transform: scale(1);
+}
+
+.sec-4 .showRight-animate {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	background: rgb(180, 180, 169);
+	transition: .8s;
+}
+
+.sec-4.show-animate .showRight-animate {
+	width: 0;
+}
+
+.sec-5 .images {
+	display: flex;
+	max-width: 1200px;
+}
+
+.sec-5 .images .imgcell {
+	transform: translateX(-32%);
+	transition-delay: calc(.2s * var(--i));
+}
+.sec-5.show-animate .images .imgcell {
+	transform: translateX(0);
 }
 
 .mlr-a {
