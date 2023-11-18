@@ -19,7 +19,7 @@
 		</div>
 
 		<div style="background-color: #eee;">
-			<router-view v-if="flag" />
+			<router-view />
 		</div>
 	</div>
 </template>
