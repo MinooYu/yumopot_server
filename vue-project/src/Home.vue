@@ -16,7 +16,7 @@
 
 			<div class="mlr-a fadeUp12" style="width: 254px; font-size: 24px;  margin-top: 12px; background-color: #fff; border-radius: 32px; text-align: center;">
 				<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
-				<router-link :to="{name: 'room', params: {id: randomcreateroomid}}" style="text-decoration: none; color: rgb(34, 34, 34);"><div style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px;">create room</div></router-link>
+				<router-link :to="{name: 'room', params: {id: randomcreateroomid}}" style="min-width: 254px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; border-radius: 32px; padding: 8px 24px; display: flex; align-items: center;"><label style="width: 206px;">create room</label></div></router-link>
 			</div>
 		</div>
 
