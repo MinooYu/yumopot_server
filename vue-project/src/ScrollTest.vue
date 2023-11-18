@@ -1,11 +1,11 @@
 <template>
 	<section class="sec-1">
-		<h1 class="animate">Hi, Im yumooo</h1>
-		<p class="animate">Animation on Scroll using HTML CSS and Javascrit</p>
+		<div class="animate" style=" width: 100vw ;height: 144px;"><div style="margin: auto; width: 1112px; display: flex; align-items: center;"><h1 class="animate">yumooo @ min43c</h1> <div style="width: 144px; height: 144px; background-color: #fff; color: #fff; border-radius: 4px; margin-left: 32px;">a</div> </div> </div>
+		<p class="animate">絵を描て、ゲームを作って</p>
 	</section>
 	<section class="sec-2">
-		<h1 class="animate">Keep Scrolling</h1>
-		<p class="animate">Animation on Scroll using HTML CSS and Javascrit</p>
+		<h1 class="animate">github</h1>
+		<p class="animate">urls urls urls urls urls</p>
 	</section>
 	<section class="sec-3">
 		<h1 class="animate">Nice!</h1>
@@ -17,14 +17,14 @@
 		<p>Animation on Scroll using HTML CSS and Javascrit<span class="showRight-animate"></span></p>
 	</section>
 
-	<section class="sec-5">
+	<!-- <section class="sec-5">
 		<h1 class="animate">sec5</h1>
 		<div class="images">
 			<div class="animate imgcell" style="width: 400px; height: 120px; --i:0"><div style="width:360px; height: 200px; background-color: #fff; color: #fff; border-radius: 4px;">a</div></div>
 			<div class="animate imgcell" style="width: 400px; height: 120px; --i:1"><div style="width:360px; height: 200px; background-color: #fff; color: #fff; border-radius: 4px;">a</div></div>
 			<div class="animate imgcell" style="width: 400px; height: 120px; --i:2"><div style="width:360px; height: 200px; background-color: #fff; color: #fff; border-radius: 4px;">a</div></div>
 		</div>
-	</section>
+	</section> -->
 	<section></section>
 </template>
 

@@ -4,16 +4,16 @@
 			<div style="width: 33%; display: flex;">
 				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
-			<div style="width: 34%; display: flex; padding-top: 6px;">
-				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
-				<router-link :to="{name: 'scrolltest'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To test</router-link>
-				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
-				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none; color: #313131;">To Home</router-link>
+			<div style="width: 34%; display: flex; padding-top: 6px;" class="fncbtn">
+				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
+				<router-link :to="{name: 'scrolltest'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To test</router-link>
+				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
+				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
 			</div>
-			<div style="width: 33%; display: flex; flex-direction: row-reverse;">
-				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
-				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
-				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+			<div style="width: 33%; display: flex; flex-direction: row-reverse;" class="fncbtn">
+				<div style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center;"><label style="width: 64px;">login</label></div>
+				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
 		</div>
 
@@ -84,5 +84,21 @@ export default {
 <style scoped>
 .mlr-a {
 	margin-left: auto; margin-right: auto;
+}
+
+.fncbtn div:hover{
+	transition: 0.2s;
+	transform: translateY(-1.2px);
+	color: #525252;
+}
+
+.fncbtn a{
+	transition: 0.2s;
+	color: #313131;
+}
+
+.fncbtn a:hover{
+	transform: translateY(-1.2px);
+	color: #7a7a7a;
 }
 </style>
