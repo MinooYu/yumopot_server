@@ -1,6 +1,6 @@
 <template>
 	<div style="height: 100vh; background-color: #eee;">
-		<div style="width: 100%; padding: 12px 16px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; display: flex;">
+		<div v-if="headerflag" style="width: 100%; padding: 12px 16px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; display: flex;">
 			<div style="width: 33%; display: flex;">
 				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
@@ -11,7 +11,8 @@
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
 			</div>
 			<div style="width: 33%; display: flex; flex-direction: row-reverse;" class="fncbtn">
-				<div style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center;"><label style="width: 64px;">login</label></div>
+				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center; text-decoration: none;"><label style="width: 64px;">login</label></router-link>
+				<!-- <div style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center;"><label style="width: 64px;">login</label></div> -->
 				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
@@ -36,6 +37,7 @@ export default {
         roomid: '',
         socket: io("http://localhost:3031"),
 		flag: false,
+		headerflag: true,
 
 		notifydata: [],
 		notifydatalen: 0,
@@ -54,6 +56,9 @@ export default {
 
 			if (path == "/") {
 				this.flag = false
+			}
+			else if(path == "/Login") {
+				this.headerflag = false
 			}
 			else {
 				this.flag = true
