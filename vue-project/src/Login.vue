@@ -3,34 +3,34 @@
 
 		<div class="container" id="container">
 			<div class=" form-container sign-up">
-				<form>
+				<form @submit.prevent>
 					<h1>Create Account</h1>
 					<input type="text" placeholder="Name" />
 					<input type="password" placeholder="Password" />
-					<button id="register">Sign Up</button>
+					<button id="register" v-on:click="removeActive()">Sign Up</button>
 				</form>
 			</div>
 
 			<div class="form-container sign-in">
-				<form>
+				<form @submit.prevent>
 					<h1>Sign In</h1>
 					<input type="text" placeholder="Name" />
 					<input type="password" placeholder="Password" />
 					<a>Forget Your Password</a>
-					<button id="login">Sign In</button>
+					<button id="login" v-on:click="addActive()">Sign In</button>
 				</form>
 			</div>
 			<div class="toggle-container">
 				<div class="toggle">
-					<div class="toggle-panel toggle-left">
+					<div class="toggle-panel toggle-right">
 						<h1>Welcome back!</h1>
 						<p>Enter your parsonal site</p>
-						<button class="hidden" id="login" v-on:click="removeActive()">Sign Up</button>
+						<button class="hidden" id="login" v-on:click="addActive()">Sign Up</button>
 					</div>
-					<div class="toggle-panel toggle-right">
+					<div class="toggle-panel toggle-left">
 						<h1>Hello, Friend!</h1>
 						<p>Enter your parsonal site</p>
-						<button class="hidden" id="register" v-on:click="addActive()">Sign In</button>
+						<button class="hidden" id="register" v-on:click="removeActive()">Sign In</button>
 					</div>
 				</div>
 			</div>
@@ -232,25 +232,26 @@ section {
 	width: 50%;
 	height: 100%;
 	overflow: hidden;
-	transition: all 0.6 ease-in-out;
+	transition: all 0.6s ease-in-out;
 	border-radius: 150px 0 0 100px;
 	z-index: 1000;
 }
 
 .container.active .toggle-container{
 	transform: translateX(-100%);
-	border-radius: 0 150px 100px 100px 0;
+	border-radius: 0 150px 100px 0;
 }
 
 .toggle {
 	background-color: #d4b00c;
 	height: 100%;
-	background: linear-gradient(to
-	right, #e0bf29 #d4b00c);
+	background: linear-gradient(
+		to right, #e0bf29 #d4b00c);
 	color: #fff;
 	position: #fff;
 	left: relative;
 	left: -100%;
+	height: 100%;
 	width: 200%;
 	transform: translateX(0);
 	transition: all 0.6s ease-in-out;
@@ -276,15 +277,15 @@ section {
 }
 
 .toggle-left {
+	right: 0;
 	transform: translateX(-200%);
 }
 
 .container.active .toggle-left {
-	transform: translateX(0%);
+	transform: translateX(0);
 }
 
 .toggle-right {
-	left: 0;
 	transform: translateX(0);
 }
 
