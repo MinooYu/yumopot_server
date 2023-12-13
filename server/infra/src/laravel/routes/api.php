@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ChatdataController;
+use App\Http\Controllers\UsersController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +17,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::apiResource('chatdata', ChatdataController::class)->only([
+    'index', 'store', 'show', 'update'
+]);
+
+Route::apiResource('users', UsersController::class)->only([
+    'index', 'store', 'show', 'update'
+]);
+
+Route::group(['prefix' => 'testapi'], function() {
+	Route::post('userAuth', [UsersController::class, 'userAuth']);
 });
