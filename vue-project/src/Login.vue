@@ -35,6 +35,8 @@
 				</div>
 			</div>
 		</div>
+
+		<div style="padding: 12px 24px; font-weight: 400; font-size: 16px; background-color: #aaa; text-align: center; display: flex; justify-content: center; align-items: center; margin-top: 24px; border-radius: 12px; cursor: pointer;" v-on:click="routertop()"> return top </div>
 	</section>
 </template>
 
@@ -91,6 +93,9 @@ export default {
 		},
 		addActive() {
 			this.container.classList.add("active");
+		},
+		routertop() {
+			this.$router.push('/Home')
 		}
 	},
 }
@@ -113,7 +118,7 @@ section {
 .container {
 	background-color: #fff;
 	border-radius: 32px;
-	box-shadow: 0 5px 15px #00000080;
+	/* box-shadow: 0 5px 15px #00000080; */
 	position: relative;
 	overflow: hidden;
 	width: 768px;
@@ -143,7 +148,7 @@ section {
 }
 
 .container button {
-	background-color: #d4b00c;
+	background-color: #999999;
 	color: #3a3a3a;
 	font-size: 16px;
 	padding: 8px 44px;
@@ -233,17 +238,17 @@ section {
 	height: 100%;
 	overflow: hidden;
 	transition: all 0.6s ease-in-out;
-	border-radius: 150px 0 0 100px;
+	border-radius: 80px 0 0 80px;
 	z-index: 1000;
 }
 
 .container.active .toggle-container{
 	transform: translateX(-100%);
-	border-radius: 0 150px 100px 0;
+	border-radius: 0 80px 80px 0;
 }
 
 .toggle {
-	background-color: #d4b00c;
+	background-color: #9c9c9c;
 	height: 100%;
 	background: linear-gradient(
 		to right, #e0bf29 #d4b00c);

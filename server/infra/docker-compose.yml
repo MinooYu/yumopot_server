@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  app:
+    build: ./php
+    volumes:
+      - ./src:/data
+
+  db:
+    build: ./mysql
+    volumes:
+      - db-store:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db
+      - PMA_USER=phper
+      - PMA_PASSWORD=secret
+    ports:
+      - 4040:80
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
+
+volumes:
+  db-store:
