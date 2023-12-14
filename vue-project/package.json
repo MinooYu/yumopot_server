@@ -8,11 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chenfengyuan/vue-qrcode": "^2.0.0",
     "fabric": "^5.3.0",
     "socket.io-client": "^4.7.2",
-    "vue": "^3.3.8",
+    "vue": "^3.3.11",
     "vue-fabric-wrapper": "^0.3.71",
-    "vue-router": "^4.2.5"
+    "vue-qrcode-reader": "^5.4.1",
+    "vue-router": "^4.2.5",
+    "vue3-qr-reader": "^1.0.0"
   },
   "devDependencies": {
     "@types/fabric": "^5.3.5",
