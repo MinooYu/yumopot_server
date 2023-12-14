@@ -17,11 +17,11 @@
 				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
 		</div>
-
-		<div style="background-color: #eee;">
+		<div v-if="!firstpage" style="background-color: #eee;">
 			<router-view />
 		</div>
 	</div>
+	
 </template>
 
 <script>
@@ -38,6 +38,7 @@ export default {
         socket: io("http://localhost:3031"),
 		flag: false,
 		headerflag: true,
+		firstpage: false,
 
 		notifydata: [],
 		notifydatalen: 0,
@@ -56,12 +57,17 @@ export default {
 
 			if (path == "/") {
 				this.flag = false
+				this.firstpage = true
+				this.$router.push('/Home')
 			}
 			else if(path == "/Login") {
 				this.headerflag = false
+				this.firstpage = false
 			}
 			else {
 				this.flag = true
+				this.headerflag = true
+				this.firstpage = false
 			}
 		},
 	},
