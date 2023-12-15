@@ -21,7 +21,7 @@ const routes = [
 	{ path: '/Scroll', name: 'scrolltest', component: Scrolltest },
 	{ path: '/QRCodeGen', name: 'QRCodeGen', component: QRCodeGen },
 	{ path: '/Login', name: 'login', component: Login },
-	{ path: '/Room/:id', name: 'room', component: Room, props: route => ({id: route.params.id}),},
+	{ path: '/Room/:id/:name', name: 'room', component: Room, props: route => ({id: route.params.id},{name: route.params.name}),},
 	
 ]
 

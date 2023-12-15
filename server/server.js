@@ -6,6 +6,7 @@ const { log } = require("console");
 const { Socket } = require("net");
 const app = express();
 const redis = require('redis');
+const { stringify } = require("querystring");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -31,7 +32,7 @@ const io = require("socket.io")(server, {
 });
 
 async function initroomdata() {
-	var  initroomidkeys = await redis_data_get_allkey(0);
+	var initroomidkeys = await redis_data_get_allkey(0);
 	var initroomidkeyvals = await redis_data_getter_key_val_map(0, initroomidkeys)
 	log(initroomidkeyvals)
 
@@ -130,14 +131,14 @@ io.on("connection", async (socket) => {
 	// });
 
 
-	socket.on("roomcreate", async (roomid) => {
-		const room = {id: roomid, users: [], posts: []}
+	socket.on("roomcreate", async (roomid, roomname) => {
+		const room = {id: roomid,name: roomname, users: [], posts: []}
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		if(roomIndex != -1) { return }
 		else {
 			rooms.push(room);
-			// key : roomid , val : roomname
-			redis_data_setter(0, roomid, "test")
+			console.log("------------- string : " + roomname )
+			redis_data_setter(0, roomid, roomname)
 		}
 	});
 

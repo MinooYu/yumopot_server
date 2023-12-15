@@ -78,7 +78,7 @@ section {
 	align-items: center;
 	flex-direction: column;
 	min-height: 50vh;
-	background: rgb(180, 180, 169); 
+	/* background: rgb(180, 180, 169);  */
 	overflow-x: hidden;
 }
 
