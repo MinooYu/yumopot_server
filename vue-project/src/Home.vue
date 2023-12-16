@@ -1,4 +1,11 @@
 <template>
+	<loading
+		v-model:active="isLoading"
+		:can-cancel="true"
+		:on-cancel="onCancel"
+		:is-full-page="true">
+	</loading>
+
 	<div class="mlr-a" style=" margin-top: 12px; max-width: 900px; max-width: 1160px; max-height: 520px; display: flex; flex-wrap: wrap; padding: 6px 4px; overflow-y: scroll; overflow-x: hidden;">
 		<div v-for="(data, i) in rooms" :key="i" class="fadeitem" style=" width: 217px; height: 120px; margin-bottom: 32px; margin-left: 6px; margin-right: 6px;">
 			<div class="roomscell" style="text-align: center; user-select: none; display: flex; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;">
@@ -15,7 +22,7 @@
 			</div>
 			<div class="mlr-a fadeUp12" style="width: 254px;  margin-top: 12px; border-radius: 32px; text-align: center; border: 1px solid #333; text-decoration: none; display: flex;">
 				<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
-				<div class="mlr-a" style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px; text-align: center; display: flex; justify-content: center; align-items: center; color: #111; cursor: pointer;">edit room</div>
+				<div class="mlr-a" v-on:click="roomdel" style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px; text-align: center; display: flex; justify-content: center; align-items: center; color: #111; cursor: pointer;">edit room</div>
 			</div>
 		</div>
 
@@ -52,10 +59,15 @@
 <script>
 
 import io from "socket.io-client";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
 
 export default {
 	name: 'App',
 	el: "#home",
+	components: {
+		"loading":Loading,
+	},
 	data: () => (
 		{
 			rooms: [],
@@ -65,6 +77,7 @@ export default {
 			genroomflag: false,
 			roomname: '',
 			roomnameflag: false,
+			isLoading: false,
 		}
 	),
 	created() {
@@ -108,6 +121,7 @@ export default {
 		});
 		this.socket.on("roomview", (rooms) => {
 			this.rooms = rooms;
+			this.isLoading = false;
 		});
 		
 	},
@@ -130,7 +144,19 @@ export default {
 		roomset(dataid, dataname) {
 			this.roomid = dataid;
 			this.roomname = dataname;
-		}
+		},
+		roomdel() {
+			this.doLoading()
+			this.socket.emit("roomdel", this.roomid);
+		},
+		doLoading: function () {
+			let self = this;
+			self.isLoading = true;
+			setTimeout(function() {
+				self.isLoading = false;
+				console.log("timeout");
+			}, 100000);
+		},
 	}
 }
 

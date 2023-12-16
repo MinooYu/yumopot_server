@@ -142,6 +142,29 @@ io.on("connection", async (socket) => {
 		}
 	});
 
+	socket.on("roomdel", async (roomname) => {
+		var client = await redis_connection(0);
+
+		await client.del(roomname)
+		console.log("del")
+		// console.log("keys.length = " + keys.length);
+	
+		await redis_disconnection(client);
+		var roomnum = -1;
+
+		rooms.forEach((element, index) => {
+			if(element.id == roomname)
+			{
+				roomnum = index;
+				return
+			}
+		});
+
+		if(roomnum != -1) rooms.splice(roomnum, 1);
+
+		io.to(socket.id).emit("roomview", rooms);
+	})
+
 	socket.on("joinroom", async (roomid, name) => {
 		const user = { id: socket.id, roomid: roomid, name: name };
 		users.push(user);
