@@ -8,13 +8,13 @@
 			<div class="mlr-a" style="width: 320px;">
 				<div style="margin-top: 12px; width: 280px; margin-left: auto; margin-right: auto;">
 					<div>
-						<form  @submit.prevent="namech(name)">
+						<form @submit.prevent="namech(name)">
 							<input type="text" v-model="name" class="border-2 border-gray-400 rounded" placeholder="名前を変更" style="width: 100%; text-align: center; padding: 2px 4px; height: 24px; border-radius: 4px; border: 0.4px solid #777;"/>
 						</form>
 						<input type="color" v-model="mycolor" style="width: 280px; margin-top: 4px;" />
 					</div>
 					<div style="margin-top: 6px;">
-						<form  @submit.prevent="sendposts(input)">
+						<form @submit.prevent="sendposts(input)">
 							<input type="text" v-model="input" class="border-2 border-gray-400 rounded" placeholder="メッセージを送信" style="width: 100%; text-align: left; padding: 2px 4px; height: 32px; margin-top: 4px; border-radius: 4px; border: 0.4px solid #777;"/>
 						</form>
 					</div>
@@ -93,6 +93,7 @@ export default {
 			notifydata: [],
 			notifydatalen: 0,
 			notimodalflag: false,
+			roomname: '',
 		}
 	),
 	watch: {
@@ -117,6 +118,7 @@ export default {
 		console.log(name)
 		this.name = name;
 		this.roomid = this.$route.params.id
+		this.roomname = this.$route.params.name
 		this.joinroom(name)
 		// this.socket.emit("sendposts", this.roomid, "始めました");
 		
@@ -178,7 +180,8 @@ export default {
 			this.input = '';
 		},
 		joinroom(name) {
-			this.socket.emit("roomcreate", this.roomid);
+			console.log(this.roomname)
+			this.socket.emit("roomcreate", this.roomid, this.roomname);
 			this.socket.emit("joinroom", this.roomid, name);
 		},
 		roomview() {

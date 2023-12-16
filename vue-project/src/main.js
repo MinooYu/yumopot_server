@@ -9,6 +9,7 @@ import Room from './Room.vue'
 import Linkhead from './linkhead.vue'
 import Scrolltest from './ScrollTest.vue'
 import Login from './Login.vue'
+import QRCodeGen from './QRCodeGen.vue'
 
 
 
@@ -18,8 +19,9 @@ const routes = [
 	{ path: '/Home', name: 'home', component: Home },
 	{ path: '/Link', name: 'linkhead', component: Linkhead },
 	{ path: '/Scroll', name: 'scrolltest', component: Scrolltest },
+	{ path: '/QRCodeGen', name: 'QRCodeGen', component: QRCodeGen },
 	{ path: '/Login', name: 'login', component: Login },
-	{ path: '/Room/:id', name: 'room', component: Room, props: route => ({id: route.params.id}),},
+	{ path: '/Room/:id/:name', name: 'room', component: Room, props: route => ({id: route.params.id},{name: route.params.name}),},
 	
 ]
 
