@@ -5,21 +5,22 @@
 			<div class=" form-container sign-up">
 				<form @submit.prevent>
 					<h1>Create Account</h1>
-					<input type="text" placeholder="Name" />
-					<input type="password" placeholder="Password" />
-					<button id="register" v-on:click="removeActive()">Sign Up</button>
+					<input type="text" placeholder="Name" v-model="registerUsername" />
+					<input type="password" placeholder="Password" v-model="registerPassword" />
+					<button id="register" v-on:click="registerapicall()">Sign Up</button>
 				</form>
 			</div>
 
 			<div class="form-container sign-in">
 				<form @submit.prevent>
 					<h1>Sign In</h1>
-					<input type="text" placeholder="Name" />
-					<input type="password" placeholder="Password" />
+					<input type="text" placeholder="Name" v-model="loginUsername" />
+					<input type="password" placeholder="Password" v-model="loginPassword" />
 					<a>Forget Your Password</a>
 					<button id="login" v-on:click="addActive()">Sign In</button>
 				</form>
 			</div>
+
 			<div class="toggle-container">
 				<div class="toggle">
 					<div class="toggle-panel toggle-right">
@@ -43,12 +44,17 @@
 <script>
 import io from "socket.io-client";
 import { RouterView } from "vue-router";
+import axios from 'axios';
 
 const minesenum = {dig:'dig',flag:'flag',none:'none'}
 
 export default {
     name: 'App',
     el: "#first",
+	components: {
+		"axios": axios,
+		// Header,
+	},
     data: () => ({
         roomid: '',
 		flag: false,
@@ -59,6 +65,11 @@ export default {
 		container: null,
 		registerBtn: null,
 		loginBtn: null,
+		registerUsername: '',
+		registerPassword: '',
+		loginUsername: '',
+		loginPassword: '',
+		userRegReturnValues: null,
     }),
     created() {
 
@@ -82,10 +93,6 @@ export default {
 		this.container = document.getElementById('container');
 		this.registerBtn = document.getElementById('register');
 		this.loginBtn = document.getElementById('login');
-
-		
-
-		
     },
     methods: {
 		removeActive() {
@@ -96,6 +103,15 @@ export default {
 		},
 		routertop() {
 			this.$router.push('/Home')
+		},
+		registerapicall() {
+			axios.post('http://localhost:8000/api/users', {username:registerUsername, password:registerPassword})
+				.then(
+					response => this.userRegReturnValues = response.data
+				)
+				.catch(
+					error => console.log(error)
+				);
 		}
 	},
 }
