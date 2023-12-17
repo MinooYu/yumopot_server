@@ -176,7 +176,8 @@ export default {
 			this.socket.emit("roomview");
 		},
 		sendposts() {
-			this.socket.emit("sendposts", this.roomid, this.name, this.input, this.mycolor);
+			var userHash = this.$store.getters.getUserHash
+			this.socket.emit("sendposts", this.roomid, this.name, userHash, this.input, this.mycolor);
 			this.input = '';
 		},
 		joinroom(name) {

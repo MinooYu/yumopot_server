@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('chatdatas', function (Blueprint $table) {
             $table->id();
-			$table->uuid('chatUserHash');
+			$table->string('chatUsername');
+			$table->uuid('chatUserHash')->nullable();
 			$table->foreign('chatUserHash')->references('userHash')->on('users');
 			$table->string('roomid');
 			$table->text('chattext');

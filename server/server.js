@@ -7,6 +7,16 @@ const { Socket } = require("net");
 const app = express();
 const redis = require('redis');
 const { stringify } = require("querystring");
+const axiosBase = require('axios');
+
+const axios = axiosBase.create({
+	baseURL: 'http://localhost:8000', // バックエンドB のURL:port を指定する
+	headers: {
+		'Content-Type': 'application/json',
+		'X-Requested-With': 'XMLHttpRequest'
+	},
+	responseType: 'json' 
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -36,13 +46,41 @@ async function initroomdata() {
 	var initroomidkeyvals = await redis_data_getter_key_val_map(0, initroomidkeys)
 	log(initroomidkeyvals)
 
-	initroomidkeys.forEach((element, index) => {
+	initroomidkeys.forEach(async (element, index) => {
 		const initroom = {id: element, name: initroomidkeyvals.get(element), users: [], posts: []}
+		// get だとbodyがのせられない
+		await axios.post('http://localhost:8000/api/testapi/chatdatawhereroomids', {roomid: element}).then(function(response) {
+			// var postdata = { "name" : name, "post": post,"color": color};
+			// rooms[roomIndex].posts.push(postdata);
+			response.data.chatdata.forEach(element => {
+				console.log(element)
+				var postdata = { "name" : element.chatUsername, "post": element.chattext, "color": "#000000"};
+				initroom.posts.push(postdata);
+			});
+			console.log("roominit fin");
+		})
+		.catch(
+			error => console.log(error)
+		);
 		rooms.push(initroom);
 	});
 }
 
 initroomdata();
+
+// axios.get('api/testapi/chatdatawhereroomids').then(function(response) {
+// 	console.log("response user data")
+// 	console.log(response.data[0])
+// }).catch(function(error) {
+
+// });
+
+axios.get('api/users').then(function(response) {
+	console.log("response user data")
+	console.log(response.data[0])
+}).catch(function(error) {
+
+});
 
 io.on("connection", async (socket) => {
 	connectedcnt ++;
@@ -142,10 +180,10 @@ io.on("connection", async (socket) => {
 		}
 	});
 
-	socket.on("roomdel", async (roomname) => {
+	socket.on("roomdel", async (roomid) => {
 		var client = await redis_connection(0);
 
-		await client.del(roomname)
+		await client.del(roomid)
 		console.log("del")
 		// console.log("keys.length = " + keys.length);
 	
@@ -153,7 +191,7 @@ io.on("connection", async (socket) => {
 		var roomnum = -1;
 
 		rooms.forEach((element, index) => {
-			if(element.id == roomname)
+			if(element.id == roomid)
 			{
 				roomnum = index;
 				return
@@ -161,6 +199,22 @@ io.on("connection", async (socket) => {
 		});
 
 		if(roomnum != -1) rooms.splice(roomnum, 1);
+
+		io.to(socket.id).emit("roomview", rooms);
+	})
+
+	socket.on("roomedit", async (roomid, roomname) => {
+		await redis_data_setter(0, roomid, roomname);
+		
+		rooms.forEach((element, index) => {
+			if(element.id == roomid)
+			{
+				roomnum = index;
+				return
+			}
+		});
+
+		if(roomnum != -1) rooms[roomnum].name = roomname;
 
 		io.to(socket.id).emit("roomview", rooms);
 	})
@@ -224,12 +278,19 @@ io.on("connection", async (socket) => {
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
 
-	socket.on("sendposts", async (roomid, name, post, color) => {
+	socket.on("sendposts", async (roomid, name, userHash, post, color) => {
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		if(roomIndex != -1) {
 			var postdata = { "name" : name, "post": post,"color": color};
 
 			console.log(postdata); rooms[roomIndex].posts.push(postdata);
+
+			axios.post('http://localhost:8000/api/users', {username: name, userHash: userHash, roomid: roomid, chattext:post}).then(function(response) {}).catch(function(error) {})
+			// $chatdata->chatUsername = $request->username;
+			// $chatdata->chatUserHash = $request->userHash;
+			// $chatdata->roomid = $request->roomid;
+			// $chatdata->chattext = $request->chattext;
+
 			io.to(rooms[roomIndex].id).emit("viewpost", postdata);
 
 			notify(roomid, "メッセージを取得")
