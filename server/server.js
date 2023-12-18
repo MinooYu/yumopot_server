@@ -285,11 +285,12 @@ io.on("connection", async (socket) => {
 
 			console.log(postdata); rooms[roomIndex].posts.push(postdata);
 
-			axios.post('http://localhost:8000/api/users', {username: name, userHash: userHash, roomid: roomid, chattext:post}).then(function(response) {}).catch(function(error) {})
-			// $chatdata->chatUsername = $request->username;
-			// $chatdata->chatUserHash = $request->userHash;
-			// $chatdata->roomid = $request->roomid;
-			// $chatdata->chattext = $request->chattext;
+			axios.post('http://localhost:8000/api/chatdata', {username: name, userHash: userHash, roomid: roomid, chattext:post})
+			.then(
+				function(response) {
+					console.log(response.data);
+				}
+			).catch(function(error) {console.log(error)});
 
 			io.to(rooms[roomIndex].id).emit("viewpost", postdata);
 
