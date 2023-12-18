@@ -4,24 +4,35 @@
 			<div style="width: 33%; display: flex;">
 				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
+
 			<div style="width: 34%; display: flex; padding-top: 6px;" class="fncbtn">
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
 				<router-link :to="{name: 'scrolltest'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To test</router-link>
 				<router-link :to="{name: 'QRCodeGen'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To QRCodeGen</router-link>
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
 			</div>
+
 			<div style="width: 33%; display: flex; flex-direction: row-reverse;" class="fncbtn">
-				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center; text-decoration: none;"><label style="width: 64px;">login</label></router-link>
+				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"><label style="width: 64px;">login</label></router-link>
 				<!-- <div style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center;"><label style="width: 64px;">login</label></div> -->
-				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+				<div v-if="!login_Username" style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+				<div v-else style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"  v-on:click="notimodalflag = !notimodalflag;"><label style="width: 64px;">Conf</label></div>
 				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
 			</div>
 		</div>
+
 		<div v-if="!firstpage" style="background-color: #eee;">
 			<router-view />
 		</div>
 	</div>
-	
+
+	<div class="mlr-a" v-if="notimodalflag" style="width: 192px; position: fixed; top: 52px; right: calc((100vw - 98vw) / 2); margin-top: 12px;" v-bind:class="{ 'notifyitems-anim': notimodalflag }">
+		<div class="mlr-a" style="width: 192px; min-height: 124px; max-height: 324px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding: 4px 12px; filter: drop-shadow(0 0 6px #c6c6c6); text-align: center; align-items: center; overflow-y: scroll; overflow-x: hidden;">
+			<div style="margin-bottom: 12px;"><label style=" font-size: 16px;">{{ login_Userinfo.username }}</label></div>
+			<div><label style=" font-size: 16px;">{{ login_Userinfo.userHash }}</label></div>
+		</div>
+	</div>
+
 </template>
 
 <script>
@@ -70,8 +81,18 @@ export default {
 				this.firstpage = false
 			}
 		},
+		login_Username (val, old) {
+			console.log("username")
+			console.log(val)
+		},
+		login_Userinfo (val, old) {
+			console.log("userinfo")
+			console.log(val)
+		},
 	},
     computed: {
+		login_Username() {return this.$store.getters.getUsername;},
+		login_Userinfo() {return this.$store.getters.getUserinfo;},
 	},
     mounted() {
         this.socket.on("hello", (str, cnt) => {
@@ -111,5 +132,24 @@ export default {
 .fncbtn a:hover{
 	transform: translateY(-1.2px);
 	color: #7a7a7a;
+}
+
+.notifyitems-anim {
+	animation-name:fadeNotifyItemAnim;
+	animation-duration:0.2s;
+	animation-fill-mode:forwards;
+	opacity:1;
+}
+
+@keyframes fadeNotifyItemAnim {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0px);
+	}
 }
 </style>

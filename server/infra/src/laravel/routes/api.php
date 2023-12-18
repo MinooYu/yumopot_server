@@ -32,3 +32,5 @@ Route::apiResource('users', UsersController::class)->only([
 Route::group(['prefix' => 'testapi'], function() {
 	Route::post('userAuth', [UsersController::class, 'userAuth']);
 });
+
+

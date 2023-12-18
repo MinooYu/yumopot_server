@@ -1,4 +1,11 @@
 <template>
+	<loading
+		v-model:active="isLoading"
+		:can-cancel="true"
+		:on-cancel="onCancel"
+		:is-full-page="true">
+	</loading>
+
 	<section class="sec-1">
 
 		<div class="container" id="container">
@@ -17,7 +24,7 @@
 					<input type="text" placeholder="Name" v-model="loginUsername" />
 					<input type="password" placeholder="Password" v-model="loginPassword" />
 					<a>Forget Your Password</a>
-					<button id="login" v-on:click="addActive()">Sign In</button>
+					<button id="login" v-on:click="loginapicall(loginUsername, loginPassword)">Sign In</button>
 				</form>
 			</div>
 
@@ -44,6 +51,8 @@
 <script>
 import io from "socket.io-client";
 import { RouterView } from "vue-router";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
 import axios from 'axios';
 
 const minesenum = {dig:'dig',flag:'flag',none:'none'}
@@ -53,6 +62,7 @@ export default {
     el: "#first",
 	components: {
 		"axios": axios,
+		"loading":Loading,
 		// Header,
 	},
     data: () => ({
@@ -65,11 +75,14 @@ export default {
 		container: null,
 		registerBtn: null,
 		loginBtn: null,
+
 		registerUsername: '',
 		registerPassword: '',
 		loginUsername: '',
 		loginPassword: '',
-		userRegReturnValues: null,
+		userConfReturnValues: null,
+		
+		isLoading: false,
     }),
     created() {
 
@@ -104,15 +117,35 @@ export default {
 		routertop() {
 			this.$router.push('/Home')
 		},
-		registerapicall() {
-			axios.post('http://localhost:8000/api/users', {username:registerUsername, password:registerPassword})
-				.then(
-					response => this.userRegReturnValues = response.data
-				)
-				.catch(
-					error => console.log(error)
-				);
-		}
+		loginapicall: async function (loginUsername, loginPassword) {
+			this.doLoading();
+			await axios.post('http://localhost:8000/api/testapi/userAuth', {username: loginUsername, password: loginPassword}).then(response => this.userConfReturnValues = response.data).catch(error => console.log(error));
+			this.isLoading = false;
+
+			if (!this.userConfReturnValues.result) {
+				window.alert("ログインに失敗しました");
+				return;
+			}
+
+			this.$store.dispatch('set_userinfo', this.userConfReturnValues);
+			this.$router.push('/Home')
+		},
+		registerapicall: async function () {
+			this.doLoading();
+			await axios.post('http://localhost:8000/api/users', {username: this.registerUsername, password: this.registerPassword}).then(response => this.userConfReturnValues = response.data).catch(error => console.log(error));
+			this.isLoading = false;
+
+			this.$store.dispatch('set_userinfo', this.userConfReturnValues);
+			this.$router.push('/Home')
+		},
+		doLoading: function () {
+			let self = this;
+			self.isLoading = true;
+			setTimeout(function() {
+				self.isLoading = false;
+				console.log("timeout");
+			}, 100000);
+		},
 	},
 }
 </script>
