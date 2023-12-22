@@ -69,7 +69,7 @@ const routes = [
 	{ path: '/QRCodeGen', name: 'QRCodeGen', component: QRCodeGen },
 	{ path: '/Playroom', name: 'Playroom', component: Playroom },
 	{ path: '/Login', name: 'login', component: Login },
-	{ path: '/Room/:id/:name', name: 'room', component: Room, props: route => ({id: route.params.id},{name: route.params.name}),},
+	{ path: '/Room/:id/:name/:roomkind', name: 'room', component: Room, props: route => ({id: route.params.id},{name: route.params.name},{roomkind: route.params.roomkind}),},
 	
 	
 ]

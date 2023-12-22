@@ -2,7 +2,7 @@
 	<!-- <div style="margin-left: auto; margin-right: auto;"><button :v-on:click="sendposts(sendmes)">send posts</button></div> -->
 	<div class="mlr-a" style="min-width: 880px; max-width: 1260px; display: flex; flex-wrap: wrap; padding-top: 24px;">
 		<div class="mlr-a" style="width: 880px; height: 640px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6); margin-top: 12px;">
-			<App :roomid="$route.params.id" :socket="socket"></App>
+			<App v-if="roomkind == 1" :roomid="$route.params.id" :socket="socket"></App>
 		</div>
 		<div class="mlr-a" style="width: 320px; margin-top: 12px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6);">
 			<div class="mlr-a" style="width: 320px;">
@@ -94,6 +94,7 @@ export default {
 			notifydatalen: 0,
 			notimodalflag: false,
 			roomname: '',
+			roomkind: 1,
 		}
 	),
 	watch: {
@@ -119,6 +120,7 @@ export default {
 		this.name = name;
 		this.roomid = this.$route.params.id
 		this.roomname = this.$route.params.name
+		this.roomkind = this.$route.params.roomkind
 		this.joinroom(name)
 		// this.socket.emit("sendposts", this.roomid, "始めました");
 		
@@ -182,7 +184,8 @@ export default {
 		},
 		joinroom(name) {
 			console.log(this.roomname)
-			this.socket.emit("roomcreate", this.roomid, this.roomname);
+			// roomkind : 1 = drawchat, 2 = playroom
+			this.socket.emit("roomcreate", this.roomid, this.roomname, this.roomkind);
 			this.socket.emit("joinroom", this.roomid, name);
 		},
 		roomview() {

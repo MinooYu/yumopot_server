@@ -169,8 +169,8 @@ io.on("connection", async (socket) => {
 	// });
 
 
-	socket.on("roomcreate", async (roomid, roomname) => {
-		const room = {id: roomid,name: roomname, users: [], posts: []}
+	socket.on("roomcreate", async (roomid, roomname, roomkind) => {
+		const room = {id: roomid, roomkind: roomkind, name: roomname, users: [], posts: []}
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		if(roomIndex != -1) { return }
 		else {

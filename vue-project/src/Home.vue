@@ -65,9 +65,16 @@
 			<button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee; border: 1px solid #333; cursor: pointer;" v-on:click="roomview(); editflag = false">rooms view</button>
 		</div>
 	</div>
-	<div v-if="genroomflag" class="overlay" style=" z-index: 100; width: 100vw; height: 100vh; position: absolute; background-color: #eeeeeeaa; display: flex; justify-content: center; align-items: center; text-align: center;">
+	<div v-if="genroomflag" class="overlay" style=" z-index: 100; width: 100vw; height: 100vh; position: absolute; background-color: #eeeeeeee; display: flex; justify-content: center; align-items: center; text-align: center;">
 		<div>
-			<div style="height: 172px;">
+			<div>
+				<label style="font-weight: 400; font-size: 42px;">select room</label>
+			</div>
+			<div style="width: 380px; margin: auto; margin-bottom: 12px; text-align: center; font-size: 24px; font-weight: 600; display: flex;">
+				<div class="modecolp" :style="modecolp" v-on:click="roomkind = 1" style="width: 180px; height: 48px; margin: auto; display: flex; border-radius: 12px; user-select: none;"><label style=" margin: auto; display: flex; justify-content: center; align-items: center; border-radius: 12px;">playlist</label></div>
+				<div class="modecolc" :style="modecolc" v-on:click="roomkind = 2" style="width: 180px; height: 48px; margin: auto; display: flex; border-radius: 12px; user-select: none"><label style="margin: auto; display: flex; justify-content: center; align-items: center; border-radius: 12px;">chat</label></div>
+			</div>
+			<div style="height: 172px; margin-top: 32px;">
 				<div class="mlr-a" style="margin-bottom: 12px; margin-top: 32px;">
 					<form @submit.prevent="roomflagch()" class="mlr-a" style="width: 524px;">
 						<input v-model="createroom_roomname" class="mlr-a roomeditinput" placeholder="roomname" style="width: 524px; text-align: center; background-color: transparent; color: #2c3e50; padding: 4px 12px; border-radius: 4px; border: 0px solid #333; font-size: 52px; font-weight: 400;">
@@ -81,7 +88,7 @@
 			<div style="height: 152px;">
 				<div class="mlr-a fadeUp12" v-if="createroom_roomname && createroom_password" style="width: 252px; height: 64px; margin-top: 12px; border-radius: 32px; border: 1px solid #111;">
 					<!-- <router-link :to="{name: 'room', params: {id: randomcreateroomid}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div></router-link> -->
-					<router-link :to="{name: 'room', params: {id: randomcreateroomid, name: createroom_roomname}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div></router-link>
+					<router-link :to="{name: 'room', params: {id: randomcreateroomid, name: createroom_roomname, roomkind: roomkind}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div></router-link>
 				</div>
 
 				<div v-on:click="genroomflag = false; createroom_roomname = null; createroom_password = null; " style="width: 128px; height: 32px; border-radius: 16px; margin: auto; border: 1px solid #666; color: #666; margin-top: 12px; display: flex; justify-content: center; align-items: center;"> close </div>
@@ -120,6 +127,8 @@ export default {
 			
 			createroom_roomname:'',
 			createroom_password:'',
+
+			roomkind: 1,
 		}
 	),
 	created() {
@@ -131,7 +140,32 @@ export default {
 		});
 	},
 	computed: {
-
+		modecolp() {
+			if(this.roomkind == 1) {
+				return {
+					'--rowtxtcol' : "#2c3e50",
+					'--rowcal' : "#fff"
+				}
+			}
+			return {
+				'--rowtxtcol' : "#aaa",
+				'--rowcal' : "#fafafa"
+			}
+			
+		},
+		modecolc() {
+			if(this.roomkind == 2) {
+				return {
+					'--rowtxtcol' : "#2c3e50",
+					'--rowcal' : "#fff"
+				}
+			}
+			return {
+				'--rowtxtcol' : "#aaa",
+				'--rowcal' : "#fafafa"
+			}
+			
+		},
 	},
 	watch: {
 		rooms(newval, oldval) {
@@ -172,10 +206,10 @@ export default {
 		genid() {
 			this.roomid = getRndStr();
 		},
-		joinroom() {
-			this.socket.emit("roomcreate", this.roomid, this.rooomname);
-			this.socket.emit("joinroom", this.roomid);
-		},
+		// joinroom() {
+		// 	this.socket.emit("roomcreate", this.roomid, this.rooomname, this.roomkind);
+		// 	this.socket.emit("joinroom", this.roomid);
+		// },
 		roomview() {
 			this.roomid = '';
 			this.rooms = [];
@@ -339,5 +373,14 @@ function getRndStr(){
 
 .roomeditinput:focus {
 	outline: none;
+}
+
+.modecolp {
+	color: var(--rowtxtcol);
+	background-color: var(--rowcal);
+}
+.modecolc {
+	color: var(--rowtxtcol);
+	background-color: var(--rowcal);
 }
 </style>
