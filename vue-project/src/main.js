@@ -11,6 +11,7 @@ import Linkhead from './linkhead.vue'
 import Scrolltest from './ScrollTest.vue'
 import Login from './Login.vue'
 import QRCodeGen from './QRCodeGen.vue'
+import Playroom from './youtubePlayroom.vue'
 
 const store = createStore({
 	state () {
@@ -66,8 +67,10 @@ const routes = [
 	{ path: '/Link', name: 'linkhead', component: Linkhead },
 	{ path: '/Scroll', name: 'scrolltest', component: Scrolltest },
 	{ path: '/QRCodeGen', name: 'QRCodeGen', component: QRCodeGen },
+	{ path: '/Playroom', name: 'Playroom', component: Playroom },
 	{ path: '/Login', name: 'login', component: Login },
-	{ path: '/Room/:id/:name', name: 'room', component: Room, props: route => ({id: route.params.id},{name: route.params.name}),},
+	{ path: '/Room/:id/:name/:roomkind', name: 'room', component: Room, props: route => ({id: route.params.id},{name: route.params.name},{roomkind: route.params.roomkind}),},
+	
 	
 ]
 

@@ -9,15 +9,15 @@
 				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
 				<router-link :to="{name: 'scrolltest'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To test</router-link>
 				<router-link :to="{name: 'QRCodeGen'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To QRCodeGen</router-link>
-				<router-link :to="{name: 'home'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Home</router-link>
+				<router-link :to="{name: 'Playroom'}" v-on:click="flag = true" class="routerlink" style="margin-left: auto; font-size: 18px; margin-right: auto; text-decoration: none;">To Playroom</router-link>
 			</div>
 
 			<div style="width: 33%; display: flex; flex-direction: row-reverse;" class="fncbtn">
-				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"><label style="width: 64px;">login</label></router-link>
+				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 100px; background-color: #fff; border-radius: 6px; margin-left: 16px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"><label style="width: 100px;">login</label></router-link>
 				<!-- <div style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center;"><label style="width: 64px;">login</label></div> -->
-				<div v-if="!login_Username" style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
-				<div v-else style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"  v-on:click="notimodalflag = !notimodalflag;"><label style="width: 64px;">Conf</label></div>
-				<div style="right: 0; height: 42px; width: 64px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
+				<div v-if="!login_Username" style="right: 0; height: 42px; width: 100px; background-color: #888; border-radius: 6px; margin-left: 16px;"></div>
+				<div v-else style="right: 0; height: 42px; width: 100px; background-color: #fff; border-radius: 6px; margin-left: 16px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"  v-on:click="notimodalflag = !notimodalflag;"><label style="width: 100px;">Conf</label></div>
+				<div style="right: 0; height: 42px; width: 100px; background-color: #888; border-radius: 6px; margin-left: 16px;"></div>
 			</div>
 		</div>
 
@@ -26,10 +26,27 @@
 		</div>
 	</div>
 
-	<div class="mlr-a" v-if="notimodalflag" style="width: 192px; position: fixed; top: 52px; right: calc((100vw - 98vw) / 2); margin-top: 12px;" v-bind:class="{ 'notifyitems-anim': notimodalflag }">
-		<div class="mlr-a" style="width: 192px; min-height: 124px; max-height: 324px; margin-top: 8px; background-color: #fff; border-radius: 4px; padding: 4px 12px; filter: drop-shadow(0 0 6px #c6c6c6); text-align: center; align-items: center; overflow-y: scroll; overflow-x: hidden;">
-			<div style="margin-bottom: 12px;"><label style=" font-size: 16px;">{{ login_Userinfo.username }}</label></div>
-			<div><label style=" font-size: 16px;">{{ login_Userinfo.userHash }}</label></div>
+	<div class="mlr-a" v-if="notimodalflag" style="position: fixed; top: 52px; right: calc((100vw - 98vw) / 2); margin-top: 12px;" v-bind:class="{ 'notifyitems-anim': notimodalflag }">
+		<div class="mlr-a" style=" width: 324px; min-height: 212px; max-height: 212px; margin-top: 8px; background-color: #fff; border-radius: 24px; padding: 8px 24px; filter: drop-shadow(0 0 6px #c6c6c6); align-items: center; overflow-y: scroll; overflow-x: hidden;">
+			<div>
+				<label> user : </label>
+				<label style=" font-size: 24px;">{{ login_Userinfo.username }}</label>
+			</div>
+
+			<div style="height: 64px;">
+				<!-- <label>color : </label>
+				<label style=" font-size: 24px;">{{ login_Userinfo.username }}</label> -->
+			</div>
+			<div style="height: 64px;">
+			</div>
+
+			<div style="position: absolute; top: 12px; right: 6px;">
+				<vue-qrcode v-if="targetData" :value="targetData" :options="option" tag="img"></vue-qrcode>
+			</div>
+
+			<div>
+				<label style=" font-size: 12px;">{{ login_Userinfo.userHash }}</label>
+			</div>
 		</div>
 	</div>
 
@@ -38,12 +55,14 @@
 <script>
 import io from "socket.io-client";
 import { RouterView } from "vue-router";
+import VueQrcode from "@chenfengyuan/vue-qrcode";
 
 const minesenum = {dig:'dig',flag:'flag',none:'none'}
 
 export default {
     name: 'App',
     el: "#first",
+	components: { RouterView,VueQrcode, },
     data: () => ({
         roomid: '',
         socket: io("http://localhost:3031"),
@@ -54,6 +73,19 @@ export default {
 		notifydata: [],
 		notifydatalen: 0,
 		notimodalflag: false,
+
+		targetData: "",
+			option: {
+				errorCorrectionLevel: "M",
+				maskPattern: 0,
+				margin: 4,
+				scale: 2,
+				width: 64,
+				color: {
+				dark: "#000000FF",
+				light: "#FFFFFFFF"
+				}
+			},
     }),
     created() {
         this.socket.on("connect", () => {
@@ -88,6 +120,8 @@ export default {
 		login_Userinfo (val, old) {
 			console.log("userinfo")
 			console.log(val)
+
+			this.generate()
 		},
 	},
     computed: {
@@ -108,8 +142,13 @@ export default {
 			});
 		});
     },
-    methods: {},
-    components: { RouterView }
+    methods: {
+		generate: function() {
+			const json = '{"username":"' + this.login_Userinfo.username +'", "pass":"' + this.login_Userinfo.password + '"}';
+			this.targetData = json;
+			this.rommjsondata = JSON.parse(json);
+		},
+	},
 }
 </script>
 
