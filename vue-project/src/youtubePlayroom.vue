@@ -47,7 +47,7 @@
 				<div v-else style="width: 480px; height: 72px; margin: auto; " >
 					<div style="width: 420px; margin: auto; display: flex;">
 						<form @submit.prevent="sendposts(input)">
-							<input  />
+							<input />
 						</form>
 					</div>
 				</div>
