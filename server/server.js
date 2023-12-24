@@ -41,20 +41,29 @@ const io = require("socket.io")(server, {
 	},
 });
 
+// select 0 : roomkey roomname
+// select 1 : roomkey password
+// select 2 : roomkey roomkind
+
 async function initroomdata() {
 	var initroomidkeys = await redis_data_get_allkey(0);
 	var initroomidkeyvals = await redis_data_getter_key_val_map(0, initroomidkeys)
-	log(initroomidkeyvals)
+	var initpasswordskeys = await redis_data_get_allkey(1);
+	var initpaswordskeyvals = await redis_data_getter_key_val_map(1, initpasswordskeys)
+	// var initroomkindskeys = await redis_data_get_allkey(2);
+	// var initroomkindkeyvals = await redis_data_getter_key_val_map(2, initroomkindskeys)
+	
+	// var initroomidkeyvals = await redis_hash_data_getter_key_val_map(0, initroomidkeys)
 
 	initroomidkeys.forEach(async (element, index) => {
-		const initroom = {id: element, name: initroomidkeyvals.get(element), users: [], posts: []}
+		const initroom = {id: element, name: initroomidkeyvals.get(element), password: initpaswordskeyvals.get(element), users: [], posts: []}
 		// get だとbodyがのせられない
 		await axios.post('http://localhost:8000/api/testapi/chatdatawhereroomids', {roomid: element}).then(function(response) {
 			// var postdata = { "name" : name, "post": post,"color": color};
 			// rooms[roomIndex].posts.push(postdata);
 			response.data.chatdata.forEach(element => {
 				console.log(element)
-				var postdata = { "name" : element.chatUsername, "post": element.chattext, "color": "#000000"};
+				var postdata = { "name" : element.chatUsername, "post": element.chattext, "color": element.color};
 				initroom.posts.push(postdata);
 			});
 			console.log("roominit fin");
@@ -169,14 +178,17 @@ io.on("connection", async (socket) => {
 	// });
 
 
-	socket.on("roomcreate", async (roomid, roomname, roomkind) => {
-		const room = {id: roomid, roomkind: roomkind, name: roomname, users: [], posts: []}
+	socket.on("roomcreate", async (roomid, roomname, password) => {
+		console.log("---------------")
+		console.log(roomname)
+		const room = {id: roomid, name: roomname, password: password, users: [], posts: []}
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
 		if(roomIndex != -1) { return }
 		else {
 			rooms.push(room);
 			console.log("------------- string : " + roomname )
 			redis_data_setter(0, roomid, roomname)
+			redis_data_setter(1, roomid, password)
 		}
 	});
 
@@ -285,7 +297,7 @@ io.on("connection", async (socket) => {
 
 			console.log(postdata); rooms[roomIndex].posts.push(postdata);
 
-			axios.post('http://localhost:8000/api/chatdata', {username: name, userHash: userHash, roomid: roomid, chattext:post})
+			axios.post('http://localhost:8000/api/chatdata', {username: name, userHash: userHash, roomid: roomid, chattext:post, color:color})
 			.then(
 				function(response) {
 					console.log(response.data);
@@ -369,6 +381,29 @@ async function redis_data_setter(dbnum, key, val)
 	await redis_disconnection(client);
 }
 
+// hashval : { key1: 'val1', key2: 'val2', ... }
+async function redis_hashdata_setter(dbnum, key, hashval)
+{
+	var client = await redis_connection(dbnum);
+
+	await client.hSet(key, hashval);
+	// console.log("set key : " + key + " / val : " + val);
+
+	await redis_disconnection(client);
+}
+
+// 
+async function redis_hashdata_getter(dbnum, key)
+{
+	var client = await redis_connection(dbnum);
+
+	var return_val = await client.hGetAll(key);
+	// console.log("set key : " + key + " / val : " + val);
+
+	await redis_disconnection(client);
+
+	return return_val;
+}
 
 async function redis_data_getter_key_val_map(dbnum, keys)
 {
@@ -385,3 +420,20 @@ async function redis_data_getter_key_val_map(dbnum, keys)
 
 	return key_val_map;
 }
+
+async function redis_hash_data_getter_key_val_map(dbnum, keys)
+{
+	var client = await redis_connection(dbnum);
+	const key_val_map = new Map();
+
+	for(let key of keys)
+	{
+		var val = await redis_hashdata_getter(client, key);
+		key_val_map.set(key ,val);
+	}
+
+	await redis_disconnection(client);
+
+	return key_val_map;
+}
+

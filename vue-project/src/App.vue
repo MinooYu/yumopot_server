@@ -1,5 +1,5 @@
 <template>
-	<div style="width: 880px; height: 460px; user-select: none; margin-top: 20px;">
+	<div style="width: 880px; height: 540px; user-select: none; margin-top: 20px;">
 
 		<!-- まいんすいーぱーの箇所 コメントアウト -->
 
@@ -18,7 +18,7 @@
 			<!-- <p style="user-select: none;">X: {{ mouseX }} Y: {{ mouseY }}</p> -->
 			<!-- position: absolute; -->
 			<canvas class="canvaslayer" style="border:0.6px solid rgb(175, 175, 175); border-radius: 4px;  position: absolute;"
-				ref="canvas1" width="840" height="460"
+				ref="canvas1" width="840" height="540"
 				v-on:mousemove="paint"
 				v-on:mousedown="dragStart"
 				v-on:mouseup="dragEnd"
@@ -43,8 +43,8 @@
 			</button> -->
 		</div>
 
-		<div style="margin-top: 8px;">
-			<div style="width: 320px; display: flex; margin-left: auto; margin-right: auto;">
+		<div style="margin-top: 8px; display: flex; text-align: center;align-items: center; justify-content: center; margin-left: auto; margin-right: auto;">
+			<div style="width: 320px; display: flex;">
 				<div style="margin-left: auto; margin-right: auto; height:">
 					<button v-on:click="colorch('#df2a2a',0)" style="border: none; background-color: #df2a2a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 					<button v-on:click="colorch('#dfd32a',0)" style="border: none; background-color: #dfd32a; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
@@ -55,13 +55,13 @@
 					<button v-on:click="clear" style="border: 1px dashed; background-color: #fff; border-radius: 4px; width: 32px; height: 32px; z-index: 12; margin-left: 2px; margin-right: 2px;"></button>
 				</div>
 			</div>
-			<div style="text-align: center; margin-top: 4px;"><input type="range" name="speed" min="1" max="36" v-model="linewid" style=""><label style="margin-left: 4px;">{{ linewid }}</label></div>
-			<div style="display: flex; width: 120px; margin-left: auto; margin-right: auto; align-items: center;">
-				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 8px; height: 8px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(8)"></div>
-				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(12)"></div>
-				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 16px; height: 16px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(16)"></div>
-				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 24px; height: 24px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(24)"></div>
+			<!-- <div style="text-align: center; margin-top: 4px;"><input type="range" name="speed" min="1" max="36" v-model="linewid" style=""><label style="margin-left: 4px;">{{ linewid }}</label></div> -->
+			<div style="display: flex; width: 120px; align-items: center;">
 				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 36px; height: 36px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(36)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 24px; height: 24px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(24)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 16px; height: 16px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(16)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(12)"></div>
+				<div class="colcell" style="margin-left: auto; margin-right: auto; width: 8px; height: 8px; border-radius: 50%; border: 1px solid #555;" v-on:click="pensizech(8)"></div>
 			</div>
 		</div>
 		<!-- <div class="mlr-a"><div style="text-align: center;"> {{ drawimg }} </div></div> -->
@@ -146,7 +146,7 @@ export default {
 		this.context.lineWidth = 1;
 		this.context.strokeStyle = '#dfb52a';
 		this.context.fillStyle = 'rgb( 255, 255, 255)';
-		this.context.fillRect(0, 0, 840, 460);
+		this.context.fillRect(0, 0, 840, 540);
 
 		this.socket.emit("initcanvas", this.roomid, this.drawimg);
 
@@ -220,7 +220,7 @@ export default {
 			const chara = new Image();
 			chara.src = this.drawimg;
 			chara.onload = () => {
-				this.context.drawImage(chara, 0, 0, 840, 460)
+				this.context.drawImage(chara, 0, 0, 840, 540)
 			};
 		});
 

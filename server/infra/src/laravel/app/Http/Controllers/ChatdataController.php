@@ -30,6 +30,7 @@ class ChatdataController extends Controller
 			$chatdata->chatUserHash = $request->userHash;
 			$chatdata->roomid = $request->roomid;
 			$chatdata->chattext = $request->chattext;
+			$chatdata->color = $request->color;
 			$chatdata->save();
 
 			$result = [
