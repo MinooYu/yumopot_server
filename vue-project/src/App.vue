@@ -23,7 +23,7 @@
 				v-on:mousedown="dragStart"
 				v-on:mouseup="dragEnd"
 				v-on:mouseout="dragEnd"
-				>
+			>
 			</canvas>
 		</div>
 
