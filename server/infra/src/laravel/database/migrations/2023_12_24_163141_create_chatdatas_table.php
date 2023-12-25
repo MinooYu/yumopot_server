@@ -18,6 +18,7 @@ return new class extends Migration
 			$table->foreign('chatUserHash')->references('userHash')->on('users');
 			$table->string('roomid');
 			$table->text('chattext');
+			$table->string('color');
             $table->timestamp('creates_at')->useCurrent();
 			$table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

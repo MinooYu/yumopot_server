@@ -4,41 +4,91 @@
 		<div class="mlr-a" style="width: 880px; height: 640px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6); margin-top: 12px;">
 			<App v-if="roomkind == 1" :roomid="$route.params.id" :socket="socket"></App>
 		</div>
-		<div class="mlr-a" style="width: 320px; margin-top: 12px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6);">
-			<div class="mlr-a" style="width: 320px;">
-				<div style="margin-top: 12px; width: 280px; margin-left: auto; margin-right: auto;">
-					<div>
-						<form @submit.prevent="namech(name)">
-							<input type="text" v-model="name" class="border-2 border-gray-400 rounded" placeholder="名前を変更" style="width: 100%; text-align: center; padding: 2px 4px; height: 24px; border-radius: 4px; border: 0.4px solid #777;"/>
-						</form>
-						<input type="color" v-model="mycolor" style="width: 280px; margin-top: 4px;" />
-					</div>
-					<div style="margin-top: 6px;">
-						<form @submit.prevent="sendposts(input)">
-							<input type="text" v-model="input" class="border-2 border-gray-400 rounded" placeholder="メッセージを送信" style="width: 100%; text-align: left; padding: 2px 4px; height: 32px; margin-top: 4px; border-radius: 4px; border: 0.4px solid #777;"/>
-						</form>
-					</div>
-					<!-- <input type="button" value="送信" @click="sendposts(input)" /> -->
+		<div class="mlr-a" style="width: 320px; height: 640px; margin-top: 12px;">
+			<div style="height: 64px; width: 320px; margin-bottom: 16px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6); display: flex; user-select: none;">
+				<div v-on:click="playlistview = true" style="height: 64px; width: 156px; margin-right: 12px; display: flex; justify-content: center; align-items: center;">
+					<label class="modecolp" :style="modecolp">playlist</label>
+				</div>
+				<div style="width: 0.2px; background-color: #eee; margin-top: 4px; margin-bottom: 4px;"></div>
+				<div v-on:click="playlistview = false" style="height: 64px; width: 156px; display: flex; justify-content: center; align-items: center;">
+					<label class="modecolc" :style="modecolc">chat</label>
 				</div>
 			</div>
+			<div style="height: 560px; background-color: #fff; border-radius: 4px; filter: drop-shadow(0 0 6px #c6c6c6); padding-top: 12px;">
+				<div class="mlr-a" style="width: 320px;">
+					<div style=" width: 280px; margin-left: auto; margin-right: auto;">
+						<div>
+							<form @submit.prevent="namech(name)">
+								<input type="text" v-model="name" class="border-2 border-gray-400 rounded" placeholder="名前を変更" style="width: 100%; text-align: center; padding: 2px 4px; height: 24px; border-radius: 4px; border: 0.4px solid #777;"/>
+							</form>
+							<input type="color" v-model="mycolor" style="width: 280px; margin-top: 4px;" />
+						</div>
+						<div style="margin-top: 6px;">
+							<form @submit.prevent="sendposts(input)">
+								<input type="text" v-model="input" class="border-2 border-gray-400 rounded" placeholder="メッセージを送信" style="width: 100%; text-align: left; padding: 2px 4px; height: 32px; margin-top: 4px; border-radius: 4px; border: 0.4px solid #777;"/>
+							</form>
+						</div>
+						<!-- <input type="button" value="送信" @click="sendposts(input)" /> -->
+					</div>
+				</div>
 
-			<!-- <div class="mlr-a" style="width: 1200px; display: flex;">
-				<div style="margin-left: auto; margin-right: auto;"><button v-on:click="viewposts">view posts</button></div>
-			</div> -->
-			<div><a style="color: red;">{{ message }}</a></div>
+				<!-- <div class="mlr-a" style="width: 1200px; display: flex;">
+					<div style="margin-left: auto; margin-right: auto;"><button v-on:click="viewposts">view posts</button></div>
+				</div> -->
+				<div><a style="color: red;">{{ message }}</a></div>
 
 
-			<div class="mlr-a" id="scroller" style="width: 312px; height: 332px; margin-top: 8px; overflow-y: scroll; overflow-x: hidden;">
-				<div v-for="(post, i) in posts" :key="i" class="fadeLeft" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: left; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
-			</div>
-			<div class="mlr-a" style="width: 312px; margin-top: 8px;">
-				<div style="width: 152px; margin-bottom: 8px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"> users:{{ users.length }}</div>
-			</div>
-			<div class="mlr-a" style="width: 312px; height: 124px; margin-top: 8px; margin-bottom: 8px; overflow-y: scroll; overflow-x: hidden;">
-				<div class="fadeLeft" v-for="(user, j) in users" :key="j" style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 4px;"><a>{{ user.name }}</a></div>
-				<!-- <div style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"><a>{{ users }}</a></div> -->
+				<div class="mlr-a" id="scroller" style="width: 312px; height: 252px; margin-top: 8px; overflow-y: scroll; overflow-x: hidden;">
+					<div v-for="(post, i) in posts" :key="i" class="fadeLeft" style="width: 280px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: left; margin-top: 4px;"><a class="name">{{ post.name }} : </a><a>{{ post.post }}</a></div>
+				</div>
+				<div class="mlr-a" style="width: 312px; margin-top: 8px;">
+					<div style="width: 152px; margin-bottom: 8px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"> users:{{ users.length }}</div>
+				</div>
+				<div class="mlr-a" style="width: 312px; height: 124px; margin-top: 8px; margin-bottom: 8px; overflow-y: scroll; overflow-x: hidden;">
+					<div class="fadeLeft" v-for="(user, j) in users" :key="j" style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 4px;"><a>{{ user.name }}</a></div>
+					<!-- <div style="width: 280px; padding: 4px 12px; border-radius: 4px; margin-left: auto; margin-right: auto; text-align: center; background-color: #eee; margin-top: 12px;"><a>{{ users }}</a></div> -->
+				</div>
 			</div>
 		</div>
+	</div>
+	<div class="mlr-a" style="min-width: 880px; max-width: 1260px; height: 80px; margin-top: 16px; filter: drop-shadow(0 0 6px #c6c6c6);">
+		<div class="mlr-a" style="min-width: 852px; max-width: 1232px; height: 2px; background-color: #fff; border-radius: 4px;"><input class="timeslider" type="range" name="speed" min="0" :max="mlen" value="0" v-model="linewid" style=" height: 2px; width: 1232px; position: absolute;"></div>
+		<div class="mlr-a" style="min-width: 852px; max-width: 1232px; height: 72px; background-color: #fff; border-radius: 0 0 4px 4px; display: flex;">
+			<div style="display: flex; margin-left: 12px; width: 156px; margin-right: 12px;">
+				<div style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'backward-step']" class="fa-xl" /></div>
+				<div v-if="musicplaystate" v-on:click="musicplaystate = false" style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'play']" class="fa-2xl" /></div>
+				<div v-else v-on:click="musicplaystate = true" style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'pause']" class="fa-2xl" /></div>
+				<div style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'forward-step']" class="fa-xl" /></div>
+			</div>
+			<div style=" display: flex; align-items: center; width: 96px; margin-left: 12px; margin-right: 12px; user-select: none;">
+				<label style="width: 40px; text-align: center;"> 00:00 </label>
+				<label style="width: 12px; text-align: center;"> / </label>
+				<label style="width: 40px; text-align: center;"> 00:00 </label>
+			</div>
+			<div style="min-width: 660px; max-width: 980px; margin: 4px; border-radius: 4px; display: flex; align-items: center;">
+				<div class="mlr-a" style="display: flex; width: 316px;">
+					<div style="width: 80px; display: flex; align-items: center; justify-content: center;">
+						<label> thumbnail </label>
+					</div>
+					<div style="width: 152px; display: flex; align-items: center; justify-content: left; padding-left: 12px;">
+						<div style="display: block;">
+							<div><label>title</label></div>
+							<div><label>artist</label></div>
+						</div>
+					</div>
+					<div style="width: 80px; display: flex; align-items: center; justify-content: left; padding-left: 12px;">
+						<label>option</label>
+					</div>
+				</div>
+			</div>
+			<div style=" display: flex; align-items: center; width: 96px; margin-left: 12px; margin-right: 12px;"></div>
+			<div style="display: flex; margin-left: 12px; width: 156px; margin-right: 12px;">
+				<div style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'repeat']" class="fa-xl" /></div>
+				<div style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'shuffle']" class="fa-xl" /></div>
+				<div style="width: 52px; display: flex; text-align: center; align-items: center; justify-content: center;"><font-awesome-icon :icon="['fas', 'volume-xmark']" class="fa-xl" /></div>
+			</div>
+		</div>
+
 	</div>
 
 	<div v-if="!notimodalflag" style="position: fixed; user-select: none; bottom: 24px; right: calc((100vw - 96vw) / 2); height: 52px; width: 52px; background-color: #fff; border-radius: 50%; text-align: center; display: flex; align-items: center; text-align: center; filter: drop-shadow(0 0 6px #c6c6c6);" v-on:click="notimodalflag = !notimodalflag;"><label style="width: 52px;">{{ notifydatalen }}</label></div>
@@ -73,12 +123,18 @@ window.addEventListener('scroll', function () {
 
 import io from "socket.io-client";
 import App from './App.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fas)
 
 export default {
 	name: 'Room',
 	el: "#home",
 	components: {
 		'App': App,
+		'font-awesome-icon': FontAwesomeIcon,
 	},
 	data: () => (
 		{
@@ -95,6 +151,11 @@ export default {
 			notimodalflag: false,
 			roomname: '',
 			roomkind: 1,
+			password: '',
+			mlen: 3600,
+
+			musicplaystate: false,
+			playlistview: false,
 		}
 	),
 	watch: {
@@ -118,15 +179,46 @@ export default {
 		var name = getRndStr();
 		console.log(name)
 		this.name = name;
+		
+		console.log("--------id")
+		console.log(this.$route.params.id)
 		this.roomid = this.$route.params.id
+		console.log("--------name")
+		console.log(this.$route.params.name)
 		this.roomname = this.$route.params.name
-		this.roomkind = this.$route.params.roomkind
+		this.password = this.$route.params.password
+		// this.roomkind = this.$route.params.roomkind
 		this.joinroom(name)
 		// this.socket.emit("sendposts", this.roomid, "始めました");
 		
 	},
 	computed: {
-
+		modecolp() {
+			if(this.playlistview) {
+				return {
+					'--rowtxtcol' : "#2c3e50",
+					'--rowfontweight' : 400,
+				}
+			}
+			return {
+				'--rowtxtcol' : "#c6c6c6",
+				'--rowfontweight' : 100,
+			}
+			
+		},
+		modecolc() {
+			if(!this.playlistview) {
+				return {
+					'--rowtxtcol' : "#2c3e50",
+					'--rowfontweight' : 400,
+				}
+			}
+			return {
+				'--rowtxtcol' : "#c6c6c6",
+				'--rowfontweight' : 100,
+			}
+			
+		},
 	},
 	mounted() {
 		this.socket.on("hello", (str, cnt) => {
@@ -185,7 +277,7 @@ export default {
 		joinroom(name) {
 			console.log(this.roomname)
 			// roomkind : 1 = drawchat, 2 = playroom
-			this.socket.emit("roomcreate", this.roomid, this.roomname, this.roomkind);
+			this.socket.emit("roomcreate", this.roomid, this.roomname, this.password);
 			this.socket.emit("joinroom", this.roomid, name);
 		},
 		roomview() {
@@ -307,4 +399,32 @@ function getRndStr(){
 		display: none;
 	}
 }
+
+.timeslider {
+}
+
+.timeslider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	/* color: #df2a2a !important; */
+}
+
+.timeslider::-webkit-slider-runnable-tracks {
+	-webkit-appearance: none;
+	appearance: none;
+	height: 2px;
+}
+
+.modecolp {
+	color: var(--rowtxtcol);
+	font-weight: var(--rowfontweight);
+}
+.modecolc {
+	color: var(--rowtxtcol);
+	font-weight: var(--rowfontweight);
+}
+
 </style>
