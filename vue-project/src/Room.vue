@@ -183,10 +183,6 @@ export default {
 		console.log("--------id")
 		console.log(this.$route.params.id)
 		this.roomid = this.$route.params.id
-		console.log("--------name")
-		console.log(this.$route.params.name)
-		this.roomname = this.$route.params.name
-		this.password = this.$route.params.password
 		// this.roomkind = this.$route.params.roomkind
 		this.joinroom(name)
 		// this.socket.emit("sendposts", this.roomid, "始めました");
@@ -277,7 +273,7 @@ export default {
 		joinroom(name) {
 			console.log(this.roomname)
 			// roomkind : 1 = drawchat, 2 = playroom
-			this.socket.emit("roomcreate", this.roomid, this.roomname, this.password);
+			// this.socket.emit("roomcreate", this.roomid, this.roomname, this.password);
 			this.socket.emit("joinroom", this.roomid, name);
 		},
 		roomview() {

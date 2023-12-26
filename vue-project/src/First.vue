@@ -1,5 +1,6 @@
 <template>
-	<div style="height: 100vh; background-color: #eee; overflow-x: hidden;">
+	<!-- <div style="height: 100vh; background-color: #eee; overflow-x: hidden;" id="target" v-on:click="clickpoint"> -->
+	<div style="height: 100vh; background-color: #eee; overflow-x: hidden;" id="target">
 		<div v-if="headerflag" style="width: 100%; padding: 12px 16px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; display: flex;">
 			<div style="width: 33%; display: flex;">
 				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
@@ -13,7 +14,9 @@
 			</div>
 
 			<div style="width: 33%; display: flex; flex-direction: row-reverse;" class="fncbtn">
-				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 100px; background-color: #fff; border-radius: 6px; margin-left: 16px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"><label style="width: 100px;">login</label></router-link>
+				<router-link :to="{name: 'login'}" v-on:click="flag = true" class="routerlink" style="height: 42px; width: 100px; background-color: #fff; border-radius: 6px; margin-left: 16px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;">
+					<label style="width: 100px;">login</label>
+				</router-link>
 				<!-- <div style="right: 0; height: 42px; width: 64px; background-color: #fff; border-radius: 6px; margin-left: 4px; display: flex; align-items: center; text-align: center;"><label style="width: 64px;">login</label></div> -->
 				<div v-if="!login_Username" style="right: 0; height: 42px; width: 100px; background-color: #888; border-radius: 6px; margin-left: 16px;"></div>
 				<div v-else style="right: 0; height: 42px; width: 100px; background-color: #fff; border-radius: 6px; margin-left: 16px; display: flex; align-items: center; text-align: center; text-decoration: none; user-select: none;"  v-on:click="notimodalflag = !notimodalflag;"><label style="width: 100px;">Conf</label></div>
@@ -56,6 +59,7 @@
 import io from "socket.io-client";
 import { RouterView } from "vue-router";
 import VueQrcode from "@chenfengyuan/vue-qrcode";
+import { faLeaf } from "@fortawesome/free-solid-svg-icons";
 
 const minesenum = {dig:'dig',flag:'flag',none:'none'}
 
@@ -75,17 +79,18 @@ export default {
 		notimodalflag: false,
 
 		targetData: "",
-			option: {
-				errorCorrectionLevel: "M",
-				maskPattern: 0,
-				margin: 4,
-				scale: 2,
-				width: 64,
-				color: {
-				dark: "#000000FF",
-				light: "#FFFFFFFF"
-				}
-			},
+		option: {
+			errorCorrectionLevel: "M",
+			maskPattern: 0,
+			margin: 4,
+			scale: 2,
+			width: 64,
+			color: {
+			dark: "#000000FF",
+			light: "#FFFFFFFF"
+			}
+		},
+		
     }),
     created() {
         this.socket.on("connect", () => {
@@ -148,6 +153,11 @@ export default {
 			this.targetData = json;
 			this.rommjsondata = JSON.parse(json);
 		},
+		clickpoint(event) {
+			var x = event.pageX ;
+			var y = event.pageY ;
+			console.log(x, y)
+		}
 	},
 }
 </script>

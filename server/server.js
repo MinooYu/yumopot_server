@@ -56,7 +56,10 @@ async function initroomdata() {
 	// var initroomidkeyvals = await redis_hash_data_getter_key_val_map(0, initroomidkeys)
 
 	initroomidkeys.forEach(async (element, index) => {
-		const initroom = {id: element, name: initroomidkeyvals.get(element), password: initpaswordskeyvals.get(element), users: [], posts: []}
+		var password = ""
+		if (initpaswordskeyvals.get(element)) password = initpaswordskeyvals.get(element)
+		
+		const initroom = {id: element, name: initroomidkeyvals.get(element), password: password, users: [], posts: []}
 		// get だとbodyがのせられない
 		await axios.post('http://localhost:8000/api/testapi/chatdatawhereroomids', {roomid: element}).then(function(response) {
 			// var postdata = { "name" : name, "post": post,"color": color};
@@ -179,17 +182,29 @@ io.on("connection", async (socket) => {
 
 
 	socket.on("roomcreate", async (roomid, roomname, password) => {
+		var flag = false
 		console.log("---------------")
 		console.log(roomname)
 		const room = {id: roomid, name: roomname, password: password, users: [], posts: []}
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
-		if(roomIndex != -1) { return }
+		if(roomIndex != -1) { 
+			flag = false
+		}
 		else {
 			rooms.push(room);
 			console.log("------------- string : " + roomname )
 			redis_data_setter(0, roomid, roomname)
-			redis_data_setter(1, roomid, password)
+			if(password) {
+				redis_data_setter(1, roomid, password)
+			}
+
+			flag = true
 		}
+
+		var sleep = new Promise(resolve => setTimeout(resolve, 1000));
+		await sleep;
+
+		io.to(socket.id).emit("roomcreateres", flag);
 	});
 
 	socket.on("roomdel", async (roomid) => {
@@ -235,14 +250,56 @@ io.on("connection", async (socket) => {
 		const user = { id: socket.id, roomid: roomid, name: name };
 		users.push(user);
 		const roomIndex = rooms.findIndex((r) => r.id == roomid);
+		if( roomIndex == -1) {
+			console.log("room index -1")
+			return
+		}
 		var room = rooms[roomIndex];
 
-		console.log(name)
+		console.log("-------rooom ch")
+		console.log(room)
+
 		room.users.push(user)
 		socket.join(roomid);
 
 		notify(roomid, name + "部屋に参加しました")
 	});
+
+	socket.on("toroominfoch", async (roomid) => {
+		var passflag = false;
+		const roomIndex = rooms.findIndex((r) => r.id == roomid);
+		if( roomIndex == -1) {
+			console.log("room index -1")
+		}
+		else {
+			if (rooms[roomIndex].password) {
+				passflag = true
+			}
+		}
+
+		io.to(socket.id).emit("roompassch", passflag);
+	});
+
+	socket.on("roompassch", async (roomid, password) => {
+		var flag = false
+		const roomIndex = rooms.findIndex((r) => r.id == roomid);
+		var sleep = new Promise(resolve => setTimeout(resolve, 600));
+
+		if (roomIndex == -1) {
+			
+			await sleep;
+			io.to(socket.id).emit("passchresult", flag);
+			return
+		}
+
+		if (rooms[roomIndex].password == password) {
+			flag = true;
+		}
+
+		await sleep;
+		io.to(socket.id).emit("passchresult", flag);
+		return
+	})
 
 	socket.on("namech", async (roomid, name) => {
 		// const user = { id: socket.id, roomid: roomid, name: name };
@@ -270,6 +327,10 @@ io.on("connection", async (socket) => {
 	socket.on("roomview", async () => {
 		log("roomview")
 		log(rooms)
+
+		var sleep = new Promise(resolve => setTimeout(resolve, 600));
+		await sleep;
+
 		io.to(socket.id).emit("roomview", rooms);
 	});
 	

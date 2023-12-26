@@ -37,11 +37,25 @@
 		</div>
 	</div>
 
-	<div class="mlr-a" style=" margin-top: 12px; max-width: 900px; max-width: 1160px; min-height: 520px; max-height: 520px; display: flex; flex-wrap: wrap; padding: 6px 4px; overflow-y: scroll; overflow-x: hidden;">
-		<div v-if="rooms.length == 0" style="text-align: center; align-items: center; margin: auto;"> <div style=" margin: auto; text-align: center; font-size: 64px; font-weight: 600;">Not Found Rooms</div><div style=" font-weight: 400; font-size: 24px; margin: auto; text-align: center;">Click rooms view</div></div>
-		<div v-else v-for="(data, i) in rooms" :key="i" class="fadeitem" style=" width: 217px; height: 120px; margin-bottom: 32px; margin-left: 6px; margin-right: 6px;">
-			<div class="roomscell" style="text-align: center; user-select: none; display: flex; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;">
-				<input type="radio" name="roomscell" :id="i" style="position: absolute; display: none;"><label :for="i" style="width: 217px; height: 120px; border-radius: 8px; padding-top: 44px; cursor: pointer;" v-on:click="roomid = data.id; roomname = data.name; editroomname = data.name; selectroompassword = data.password">{{ data.name }}</label>
+	<div class="mlr-a" style=" margin-top: 12px; max-width: 900px; max-width: 1160px; min-height: 520px; max-height: 520px; display: flex; flex-wrap: wrap; padding: 6px 4px; overflow-y: scroll; overflow-x: hidden; align-items: center;">
+		<div v-if="rooms.length == 0" style="text-align: center; align-items: center; margin: auto;"> <div style=" margin: auto; text-align: center; font-size: 64px; font-weight: 600;">Rooms Not Found</div><div style=" font-weight: 400; font-size: 24px; margin: auto; text-align: center;">Click to view rooms</div></div>
+		<div v-else style="max-height: 520px; display: flex; flex-wrap: wrap;">
+			<div v-for="(data, i) in rooms" :key="i" class="fadeitem" style=" width: 217px; height: 120px; margin-bottom: 32px; margin-left: 6px; margin-right: 6px;">
+				<div class="roomscell ripple-button" style="text-align: center; user-select: none; display: flex; margin-left: auto; margin-right: auto; border-radius: 8px; font-size: 20px; color: #666;" v-on:pointerdown="starttimer(); deli=i" v-on:pointerup="resettimer" v-on:pointermove="resettimer" v-on:pointercancel="resettimer" v-on:click="resettimer">
+					<input type="radio" name="roomscell" :id="i" style="position: absolute; display: none; ">
+
+					<!-- <div v-if="keyiconmousehover && i == hoveri" style="position: absolute;">
+						<div style="width: 120px; height: 64px; background-color: #fff; border-radius: 4px; transform: translateY(-24px);">
+							<label style="background-color: #fff; font-size: 12px;">need password</label>
+						</div>
+					</div> -->
+
+					<label :for="i" style="width: 217px; height: 120px; border-radius: 8px; padding-top: 44px; cursor: pointer;" v-on:click="roomid = data.id; roomname = data.name; editroomname = data.name; selectroompassword = data.password">
+						<font-awesome-icon v-if="data.password" v-on:mouseover="keyiconmousehover = true; hoveri = i;" v-on:mouseleave="keyiconmousehover = false" :icon="['fas', 'key']" />
+						{{ data.name }}
+					</label>
+					<input v-if="longclick && i == deli" type="button" class="fadeUp12" style="height: 52px; width: 112px; z-index: 100; filter: drop-shadow(0 0 2px #812a2a); position: absolute; bottom: 0; right: 0; margin-bottom: 12px; margin-right: 12px; border-radius: 26px; border: 0px solid #333; cursor: pointer; background-color: #dd3030; color: #eee; font-weight: 600; font-size: 16px;" v-on:click="roomdel()" value="del room" />
+				</div>
 			</div>
 		</div>
 	</div>
@@ -51,7 +65,9 @@
 		<div v-if="roomid && !editflag">
 			<div class="mlr-a fadeUp12" style="width: 254px;  margin-top: 12px; background-color: #fff; border-radius: 32px; text-align: center; border: 1px solid #eee;">
 				<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
-				<router-link :to="{name: 'room', params: {id: roomid, name: roomname, password: selectroompassword}}" style="text-decoration: none; color: rgb(34, 34, 34); text-align: center; display: flex;"><div class="mlr-a" style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px; text-align: center; display: flex; justify-content: center; align-items: center; color: #c7d406;">to room</div></router-link>
+				<div v-on:click="toroom()" style="text-decoration: none; color: rgb(34, 34, 34); text-align: center; display: flex;">
+					<div class="mlr-a" style="width: 254px; height: 64px; border-radius: 32px; padding: 8px 24px; text-align: center; display: flex; justify-content: center; align-items: center; color: #c7d406;">to room</div>
+				</div>
 			</div>
 			<div class="mlr-a fadeUp12" style="width: 254px;  margin-top: 12px; border-radius: 32px; text-align: center; border: 1px solid #333; text-decoration: none; display: flex;">
 				<!-- <button style="width: 124px; padding: 8px 24px; border-radius: 8px; background-color: #eee;" v-on:click="genid">create room</button> -->
@@ -88,15 +104,60 @@
 			</div>
 
 			<div style="height: 152px;">
-				<div class="mlr-a fadeUp12" v-if="createroom_roomname && createroom_password" style="width: 252px; height: 64px; margin-top: 12px; border-radius: 32px; border: 1px solid #111;">
+				<div class="mlr-a fadeUp12" v-if="createroom_roomname" style="width: 252px; height: 64px; margin-top: 12px; border-radius: 32px; border: 1px solid #111;">
 					<!-- <router-link :to="{name: 'room', params: {id: randomcreateroomid}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div></router-link> -->
-					<router-link :to="{name: 'room', params: {id: randomcreateroomid, name: createroom_roomname, password: createroom_password}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div></router-link>
+					<div v-on:click="roomcreate()" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;">
+						<div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div>
+					</div>
+					<!-- <router-link :to="{name: 'room', params: {id: randomcreateroomid, name: createroom_roomname, password: createroom_password}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;">
+						<div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div>
+					</router-link> -->
 				</div>
 
 				<div v-on:click="genroomflag = false; createroom_roomname = null; createroom_password = null; " style="width: 128px; height: 32px; border-radius: 16px; margin: auto; border: 1px solid #666; color: #666; margin-top: 12px; display: flex; justify-content: center; align-items: center;"> close </div>
 			</div>
 		</div>
 	</div>
+
+	<div v-if="passch" class="overlay" style=" z-index: 100; width: 100vw; height: 100vh; position: absolute; background-color: #eeeeeeee; display: flex; justify-content: center; align-items: center; text-align: center;">
+		<div>
+			<!-- <div>
+				<label style="font-weight: 400; font-size: 42px;">select room</label>
+			</div>
+			<div style="width: 380px; margin: auto; margin-bottom: 12px; text-align: center; font-size: 24px; font-weight: 600; display: flex;">
+				<div class="modecolp" :style="modecolp" v-on:click="roomkind = 1" style="width: 180px; height: 48px; margin: auto; display: flex; border-radius: 12px; user-select: none;"><label style=" margin: auto; display: flex; justify-content: center; align-items: center; border-radius: 12px;">playlist</label></div>
+				<div class="modecolc" :style="modecolc" v-on:click="roomkind = 2" style="width: 180px; height: 48px; margin: auto; display: flex; border-radius: 12px; user-select: none"><label style="margin: auto; display: flex; justify-content: center; align-items: center; border-radius: 12px;">chat</label></div>
+			</div> -->
+			<div style="height: 172px; margin-top: 32px;">
+				<div class="mlr-a" style="margin-bottom: 12px; margin-top: 32px;">
+					<form @submit.prevent="" class="mlr-a" style="width: 524px;">
+						<input v-model="enterroompass" type="password" class="mlr-a roomeditinput" placeholder=":Password" style="width: 524px; text-align: center; background-color: transparent; color: #2c3e50; padding: 4px 12px; border-radius: 4px; border: 0px solid #333; font-size: 52px; font-weight: 400;">
+					</form>
+				</div>
+			</div>
+
+			<div style="height: 152px;">
+				<div class="mlr-a fadeUp12" style="width: 252px; height: 64px; margin-top: 12px; border-radius: 32px; border: 1px solid #111;">
+					<!-- <router-link :to="{name: 'room', params: {id: randomcreateroomid}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;"><div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div></router-link> -->
+					<div v-on:click="chpass()" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;">
+						<div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">pass ch</label></div>
+					</div>
+					<!-- <router-link :to="{name: 'room', params: {id: randomcreateroomid, name: createroom_roomname, password: createroom_password}}" class="mlr-a" style="cursor: pointer; min-width: 254px; height: 64px; border-radius: 32px; text-decoration: none; color: rgb(34, 34, 34); text-align: center;">
+						<div style="height: 64px; display: flex; align-items: center;"><label class="mlr-a" style="cursor: pointer;">create room</label></div>
+					</router-link> -->
+				</div>
+
+				<div v-on:click="passch = false;" style="width: 128px; height: 32px; border-radius: 16px; margin: auto; border: 1px solid #666; color: #666; margin-top: 12px; display: flex; justify-content: center; align-items: center;"> close </div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div style="width: 420px; height: 40px;  user-select: none; background-color: #c7d406;" v-on:pointerdown="starttimer" v-on:pointerup="resettimer" v-on:pointermove="resettimer" v-on:pointercancel="resettimer" v-on:click="resettimer">
+		<div style="display: flex; margin: auto; text-align: center; justify-content: center; align-items: center;">
+			<div>{{ timecnt }}</div><div v-if="longclick"><font-awesome-icon :icon="['fas', 'key']" /></div>
+		</div> -->
+	<!-- </div> -->
+
 </template>
 
 <script>
@@ -105,11 +166,18 @@ import io from "socket.io-client";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fas)
+
 export default {
 	name: 'App',
 	el: "#home",
 	components: {
 		"loading":Loading,
+		'font-awesome-icon': FontAwesomeIcon,
 	},
 	data: () => (
 		{
@@ -132,10 +200,23 @@ export default {
 
 			roomkind: 1,
 			selectroompassword: "",
+
+			passch: false,
+			enterroompass: "",
+
+			keyiconmousehover: false,
+			hoveri: 0,
+
+			longclick: false,
+			starttime: null,
+			timerid: null,
+			timecnt: 0,
+			deli: 0,
 		}
 	),
 	created() {
 		// this.genid();
+
 		this.randomcreateroomid = getRndStr()
 		this.socket.on("connect", () => {
 			console.log("connected");
@@ -191,6 +272,8 @@ export default {
 		},
 		notifydata() {
 
+		},
+		timecnt() {
 		}
 	},
 	mounted() {
@@ -204,7 +287,26 @@ export default {
 			this.isLoading = false;
 			console.log(this.rooms);
 		});
-		
+		this.socket.on("roomcreateres", (flag) => {
+			this.isLoading = false;
+			if(flag == false) {
+				return;
+			}
+			this.$router.push({name : 'room', params: {id: this.randomcreateroomid}})
+		}),
+		this.socket.on("roompassch", (flag) => {
+			this.isLoading = false;
+			if (!flag) {
+				this.$router.push({name : 'room', params: {id: this.roomid}})
+			}
+			this.passch = true;
+		})
+		this.socket.on("passchresult", (flag) => {
+			this.isLoading = false;
+			if (flag) {
+				this.$router.push({name : 'room', params: {id: this.roomid}})
+			}
+		})
 	},
 	methods: {
 		genid() {
@@ -217,6 +319,7 @@ export default {
 		roomview() {
 			this.roomid = '';
 			this.rooms = [];
+			this.doLoading()
 			this.socket.emit("roomview");
 		},
 		roomflagch() {
@@ -242,6 +345,36 @@ export default {
 				console.log("timeout");
 			}, 100000);
 		},
+		roomcreate() {
+			this.doLoading()
+
+			this.socket.emit("roomcreate", this.randomcreateroomid, this.createroom_roomname, this.createroom_password);
+		},
+		toroom() {
+			this.doLoading()
+			// パスワードチェックする
+			this.socket.emit("toroominfoch", this.roomid)
+			// this.$router.push({name : 'room', params: {id: this.roomid}})
+		},
+		chpass() {
+			this.doLoading()
+			this.socket.emit("roompassch", this.roomid, this.enterroompass)
+		},
+		starttimer() {
+			this.longclick = false
+			this.timecnt = 0;
+			this.timerid = setInterval(this.timecntinc, 10);
+			console.log(this.timerid)
+		},
+		resettimer() {
+			if(this.timecnt >= 60) this.longclick = true
+			
+			clearInterval(this.timerid)
+		},
+		timecntinc() {
+			if(this.timecnt >= 60) this.longclick = true
+			this.timecnt++
+		}
 	}
 }
 
@@ -387,4 +520,5 @@ function getRndStr(){
 	color: var(--rowtxtcol);
 	background-color: var(--rowcal);
 }
+
 </style>
