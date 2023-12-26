@@ -1,5 +1,6 @@
 <template>
-	<div style="height: 100vh; background-color: #eee; overflow-x: hidden;" id="target" v-on:click="clickpoint">
+	<!-- <div style="height: 100vh; background-color: #eee; overflow-x: hidden;" id="target" v-on:click="clickpoint"> -->
+	<div style="height: 100vh; background-color: #eee; overflow-x: hidden;" id="target">
 		<div v-if="headerflag" style="width: 100%; padding: 12px 16px; margin-left: auto; margin-right: auto; text-align: center; position: sticky; display: flex;">
 			<div style="width: 33%; display: flex;">
 				<div style="right: 0; height: 42px; width: 42px; background-color: #888; border-radius: 6px; margin-left: 4px;"></div>
