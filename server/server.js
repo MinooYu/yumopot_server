@@ -3,10 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require("http");
 const { log } = require("console");
-const { Socket } = require("net");
 const app = express();
 const redis = require('redis');
-const { stringify } = require("querystring");
 const axiosBase = require('axios');
 
 const axios = axiosBase.create({
@@ -377,9 +375,6 @@ function notify(roomid, data) {
 	var notidata = {data: data, flag: false}
 	io.to(roomid).emit("notify", notidata);
 }
-
-
-
 
 async function redis_connection(dbnum)
 {
