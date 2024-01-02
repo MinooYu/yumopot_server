@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use App\Models\users;
 use Illuminate\Http\Request;
+use App\Http\Controllers\basicfunc;
 
 class UsersController extends Controller
 {
@@ -68,17 +69,9 @@ class UsersController extends Controller
 			];
 		}
 
-		return $this->resConversionJson($result);;
+		$basicfunc = new basicfunc();
+		return $basicfunc->resConversionJson($result);
     }
-
-	private function resConversionJson($result, $statusCode=200)
-	{
-		if(empty($statusCode) || $statusCode < 100 || $statusCode >= 600) {
-			$statusCode = 500;
-		}
-		return response()->json($result, $statusCode, ['Content-Type' => 'application/json'], JSON_UNESCAPED_SLASHES);
-	}
-
 
     /**
      * Remove the specified resource from storage.
