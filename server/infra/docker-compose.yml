@@ -37,7 +37,7 @@ services:
       - PMA_USER=phper
       - PMA_PASSWORD=secret
     ports:
-      - 4040:80
+      - 4040:4040
     volumes:
       - ./phpmyadmin/sessions:/sessions
 
