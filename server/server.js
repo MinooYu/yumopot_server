@@ -8,7 +8,7 @@ const redis = require('redis');
 const axiosBase = require('axios');
 
 const axios = axiosBase.create({
-	baseURL: 'http://localhost:8000', // バックエンドB のURL:port を指定する
+	baseURL: 'http://34.121.235.126:8000', // バックエンドB のURL:port を指定する
 	headers: {
 		'Content-Type': 'application/json',
 		'X-Requested-With': 'XMLHttpRequest'
@@ -19,7 +19,6 @@ const axios = axiosBase.create({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({
-	origin: 'http://localhost:5173',
 	credentials: true,
 	optionsSuccessStatus: 200
 }));
@@ -35,7 +34,7 @@ const rooms = [];
 
 const io = require("socket.io")(server, {
 	cors: {
-		origin: ["http://localhost:5173"],
+		
 	},
 });
 
@@ -59,7 +58,7 @@ async function initroomdata() {
 		
 		const initroom = {id: element, name: initroomidkeyvals.get(element), password: password, users: [], posts: []}
 		// get だとbodyがのせられない
-		await axios.post('http://localhost:8000/api/testapi/chatdatawhereroomids', {roomid: element}).then(function(response) {
+		await axios.post('http://34.121.235.126:8000/api/testapi/chatdatawhereroomids', {roomid: element}).then(function(response) {
 			// var postdata = { "name" : name, "post": post,"color": color};
 			// rooms[roomIndex].posts.push(postdata);
 			response.data.chatdata.forEach(element => {
@@ -356,7 +355,7 @@ io.on("connection", async (socket) => {
 
 			console.log(postdata); rooms[roomIndex].posts.push(postdata);
 
-			axios.post('http://localhost:8000/api/chatdata', {username: name, userHash: userHash, roomid: roomid, chattext:post, color:color})
+			axios.post('http://34.121.235.126:8000/api/chatdata', {username: name, userHash: userHash, roomid: roomid, chattext:post, color:color})
 			.then(
 				function(response) {
 					console.log(response.data);
