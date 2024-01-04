@@ -368,6 +368,10 @@ io.on("connection", async (socket) => {
 		}
 		else { io.to(socket.id).emit("err", "見つかりませんでした"); }
 	});
+
+	socket.on("iconanim", async (roomid) => {
+		io.to(roomid).emit("iconanim");
+	});
 });
 
 function notify(roomid, data) {
