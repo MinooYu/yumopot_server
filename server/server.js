@@ -109,7 +109,7 @@ io.on("connection", async (socket) => {
 		}
 	});
 
-	socket.on("canvas", async (roomid, canvasitem) => {
+	await socket.on("canvas", async (roomid, canvasitem) => {
 		const Canvasindex = Canvas.findIndex((r) => r.id == roomid);
 		if(Canvasindex != -1) { Canvas[Canvasindex].canvas = canvasitem; io.to(roomid).emit("canvas", Canvas[Canvasindex].canvas); }
 		else { 
